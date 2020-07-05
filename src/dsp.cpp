@@ -16,10 +16,10 @@
  *
  */
 
-#include <QtCore/QtMath>
-#include <QtCore/QList>
-#include <QtCore/QtEndian>
 #include <QtCore/QByteArray>
+#include <QtCore/QList>
+#include <QtCore/QtMath>
+#include <QtCore/QtEndian>
 #include <QtCore/QDataStream>
 
 #include "dsp.hpp"
@@ -176,4 +176,32 @@ double DSP::rms(const QList<qreal> &data) {
     qreal root = qSqrt(mean);
 
     return root;
+}
+
+QList<qreal> DSP::multiply(const QList<qreal> &values, const QList<qreal> &beats) {
+    QList<qreal> output;
+
+    for (int i = 0; i < values.length() && i < beats.length(); i++)
+        output.append(values[i] * beats[i]);
+
+    return output;
+}
+
+
+QList<qreal> DSP::generateSine(int sampleRate, unsigned int frequency, qreal phase, int len) {
+    const qreal pulse = 2 * M_PI * frequency;
+
+    QList<qreal> sine;
+
+    for (int i = 0; i < len; i++) {
+        qreal angle = pulse * ((qreal) i / sampleRate);
+        sine.append(qSin(angle + phase));
+    }
+
+    return sine;
+}
+
+qreal DSP::getPhaseForNextGeneration(QList<qreal> signal) {
+    const qreal lastItem = signal.last();
+    return qAsin(lastItem);
 }

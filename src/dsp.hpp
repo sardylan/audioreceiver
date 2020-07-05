@@ -35,6 +35,14 @@ namespace audioreceiver {
         static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
 
         static qreal rms(const QList<qreal> &data);
+
+        static QList<qreal> multiply(const QList<qreal> &values, const QList<qreal> &beats);
+
+    private:
+
+        static QList<qreal> generateSine(int sampleRate, unsigned int frequency, qreal phase, int len);
+
+        static qreal getPhaseForNextGeneration(QList<qreal> signal);
     };
 
 }
