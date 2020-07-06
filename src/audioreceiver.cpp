@@ -60,6 +60,20 @@ BOOL WINAPI ctrlHandler(DWORD fdwCtrlType) {
 #endif
 
 int main(int argc, char **argv) {
+    qSetMessagePattern("\x1b[94;1m[\x1b[96;1m%{time yyyy-MM-dd hh:mm:ss.zzz}\x1b[94;1m]\x1b[39;0m "
+                       "PID:\x1b[31m%{pid}\x1b[39m "
+                       "TID:\x1b[91m%{threadid}\x1b[39m "
+                       "["
+                       "%{if-debug}\x1b[37m DEBUG  \x1b[39m%{endif}"
+                       "%{if-info}\x1b[92m INFO   \x1b[39m%{endif}"
+                       "%{if-warning}\x1b[93mWARNING \x1b[39m%{endif}"
+                       "%{if-critical}\x1b[91mCRITICAL\x1b[39m%{endif}"
+                       "%{if-fatal}\x1b[91;5m FATAL  \x1b[39;25m%{endif}"
+                       "]: "
+                       "%{file}:%{line} "
+                       "[\x1b[97m%{function}()\x1b[39m] "
+                       "%{message}");
+
     QCoreApplication coreApplication(argc, argv);
 
     audioReceiver = new AudioReceiver();
@@ -69,6 +83,7 @@ int main(int argc, char **argv) {
 
 #ifdef Q_OS_LINUX
     signal(SIGINT, signalHandler);
+    signal(SIGTERM, signalHandler);
 #endif
 
 #ifdef Q_OS_WINDOWS
@@ -83,41 +98,72 @@ AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
     audioSource = new AudioSource();
     audioDestination = new AudioDestination();
 
+    bfo = nullptr;
+
     connect(audioSource, &AudioSource::newFrame, this, &AudioReceiver::newFrame);
-//    connect(audioSource, &AudioSource::newFrame, audioDestination, &AudioDestination::newFrame);
 }
 
 AudioReceiver::~AudioReceiver() {
     delete audioSource;
     delete audioDestination;
+
+    delete bfo;
 };
 
 void AudioReceiver::start() {
     qInfo() << "Starting Audio Receiver";
 
-    audioDestination->setDeviceInfo(QAudioDeviceInfo::defaultOutputDevice());
-    audioDestination->start();
+    QAudioFormat requestedAudioFormat;
+    requestedAudioFormat.setChannelCount(1);
+    requestedAudioFormat.setSampleRate(48000);
+    requestedAudioFormat.setSampleSize(16);
+    requestedAudioFormat.setSampleType(QAudioFormat::SignedInt);
+    requestedAudioFormat.setByteOrder(QAudioFormat::BigEndian);
+    requestedAudioFormat.setCodec("audio/pcm");
 
     audioSource->setDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
-    audioSource->start();
+    audioSource->setAudioFormat(requestedAudioFormat);
+
+    QAudioFormat audioFormat = audioSource->getAudioFormat();
+
+    audioDestination->setDeviceInfo(QAudioDeviceInfo::defaultOutputDevice());
+    audioDestination->setAudioFormat(audioFormat);
+
+    bfo = new BFO(audioFormat.sampleRate(), this);
+    bfo->setEnabled(true);
+
+    QMetaObject::invokeMethod(audioDestination, &AudioDestination::start, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(audioSource, &AudioSource::start, Qt::QueuedConnection);
 
     QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
 }
 
 void AudioReceiver::stop() {
     qInfo() << "Audio Receiver Stop";
-    audioSource->stop();
+
+    QMetaObject::invokeMethod(audioDestination, &AudioDestination::stop, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(audioSource, &AudioSource::stop, Qt::QueuedConnection);
+
+    bfo->deleteLater();
 
     QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
 }
 
 void AudioReceiver::newFrame(const QByteArray &data) {
     QList<qreal> values = DSP::bytesToValues(data, audioSource->getAudioFormat());
+    qreal inputRms = DSP::rms(values);
 
-    qreal rms = DSP::rms(values);
-    qDebug() << "RMS" << rms;
+    QList<qreal> newValues = bfo->mix(values);
 
-    QByteArray outputData = DSP::valuesToBytes(values, audioDestination->getAudioFormat());
+    QByteArray outputData = DSP::valuesToBytes(newValues, audioDestination->getAudioFormat());
 
     QMetaObject::invokeMethod(audioDestination, "newFrame", Qt::QueuedConnection, Q_ARG(const QByteArray, outputData));
+
+    qDebug()
+            << "Input size:" << data.length()
+            << "-"
+            << "Input RMS:" << inputRms
+            << "-"
+            << "Output size:" << outputData.length();
+
 }

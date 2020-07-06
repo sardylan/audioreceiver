@@ -23,10 +23,14 @@
 
 #include "audio_source.hpp"
 #include "audio_destination.hpp"
+#include "bfo.hpp"
 
 #ifdef Q_OS_LINUX
+
 #include <csignal>
+
 void signalHandler(int signal);
+
 #endif
 
 #ifdef Q_OS_WINDOWS
@@ -56,6 +60,8 @@ namespace audioreceiver {
 
         AudioSource *audioSource;
         AudioDestination *audioDestination;
+
+        BFO *bfo;
 
     private slots:
 

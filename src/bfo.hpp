@@ -16,25 +16,47 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP_H
-#define __AUDIORECEVIER__DSP_H
+#ifndef __AUDIORECEVIER__BFO_H
+#define __AUDIORECEVIER__BFO_H
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
-#include <QtMultimedia/QAudioFormat>
-
 namespace audioreceiver {
 
-    class DSP {
+    class BFO : public QObject {
+    Q_OBJECT
 
     public:
 
-        static QList<qreal> bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat);
+        explicit BFO(const int &sampleRate, QObject *parent = nullptr);
 
-        static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
+        ~BFO() override;
 
-        static qreal rms(const QList<qreal> &data);
+        [[nodiscard]] int getSampleRate() const;
+
+        [[nodiscard]] qreal getPhase() const;
+
+        [[nodiscard]] bool isEnabled() const;
+
+        void setEnabled(bool value);
+
+        [[nodiscard]] unsigned int getFrequency() const;
+
+        void setFrequency(unsigned int value);
+
+        QList<qreal> mix(const QList<qreal> &values);
+
+    private:
+
+        const int sampleRate;
+
+        qreal phase;
+
+        unsigned int frequency;
+        bool enabled;
+
+        QList<qreal> generateSine(int len);
 
     };
 

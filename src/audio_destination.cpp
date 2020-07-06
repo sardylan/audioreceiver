@@ -23,6 +23,8 @@
 using namespace audioreceiver;
 
 AudioDestination::AudioDestination(QObject *parent) : Service(parent) {
+    deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
+
     audioOutput = nullptr;
     audioIODevice = nullptr;
 
@@ -48,7 +50,7 @@ const QAudioFormat &AudioDestination::getAudioFormat() const {
 }
 
 void AudioDestination::setAudioFormat(const QAudioFormat &value) {
-    AudioDestination::audioFormat = value;
+    AudioDestination::audioFormat = deviceInfo.nearestFormat(value);
 }
 
 quint64 AudioDestination::getFrames() const {
@@ -60,14 +62,11 @@ quint64 AudioDestination::getBytes() const {
 }
 
 void AudioDestination::start() {
-    QAudioFormat requestedAudioFormat;
-    requestedAudioFormat.setChannelCount(1);
-    requestedAudioFormat.setSampleRate(48000);
-    requestedAudioFormat.setSampleSize(16);
-    requestedAudioFormat.setSampleType(QAudioFormat::SignedInt);
-    audioFormat = deviceInfo.nearestFormat(requestedAudioFormat);
+    qDebug() << "Destination Audio device:" << deviceInfo.deviceName();
+    qDebug() << "Destination Audio format:" << audioFormat;
 
     audioOutput = new QAudioOutput(deviceInfo, audioFormat);
+    audioOutput->setBufferSize(AUDIO_BUFFER_OUTPUT);
 
     audioIODevice = audioOutput->start();
 }
@@ -85,9 +84,15 @@ void AudioDestination::newFrame(const QByteArray &data) {
         return;
 
     frames++;
-    bytes += data.length();
+
+    int dataLength = data.length();
+    bytes += dataLength;
 
     qint64 writtenBytes = audioIODevice->write(data);
-    if (writtenBytes != data.length())
-        qWarning() << "Unable to write all data to audio device";
+    if (writtenBytes != dataLength)
+        qWarning() << "Unable to write all data to audio device"
+                   << "-"
+                   << writtenBytes << "of" << dataLength << "bytes written"
+                   << "-"
+                   << "Difference:" << dataLength - writtenBytes;
 }

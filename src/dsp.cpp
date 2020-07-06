@@ -27,8 +27,9 @@
 using namespace audioreceiver;
 
 QList<qreal> DSP::bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat) {
+    int dataLength = data.length();
     int sampleSize = audioFormat.sampleSize() / 8;
-    qint32 frames = audioFormat.framesForBytes(data.length());
+    qint32 frames = audioFormat.framesForBytes(dataLength);
     int channels = audioFormat.channelCount();
     QAudioFormat::Endian endian = audioFormat.byteOrder();
     QAudioFormat::SampleType sampleType = audioFormat.sampleType();
@@ -172,36 +173,11 @@ double DSP::rms(const QList<qreal> &data) {
     for (qreal item: data)
         sum += item * item;
 
+    if (sum == 0)
+        return 0;
+
     qreal mean = sum / data.length();
     qreal root = qSqrt(mean);
 
     return root;
-}
-
-QList<qreal> DSP::multiply(const QList<qreal> &values, const QList<qreal> &beats) {
-    QList<qreal> output;
-
-    for (int i = 0; i < values.length() && i < beats.length(); i++)
-        output.append(values[i] * beats[i]);
-
-    return output;
-}
-
-
-QList<qreal> DSP::generateSine(int sampleRate, unsigned int frequency, qreal phase, int len) {
-    const qreal pulse = 2 * M_PI * frequency;
-
-    QList<qreal> sine;
-
-    for (int i = 0; i < len; i++) {
-        qreal angle = pulse * ((qreal) i / sampleRate);
-        sine.append(qSin(angle + phase));
-    }
-
-    return sine;
-}
-
-qreal DSP::getPhaseForNextGeneration(QList<qreal> signal) {
-    const qreal lastItem = signal.last();
-    return qAsin(lastItem);
 }

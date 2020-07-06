@@ -28,6 +28,8 @@
 
 #include "service.hpp"
 
+#define AUDIO_BUFFER_OUTPUT 131072
+
 namespace audioreceiver {
 
     class AudioDestination : public Service {

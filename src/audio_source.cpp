@@ -23,6 +23,8 @@
 using namespace audioreceiver;
 
 AudioSource::AudioSource(QObject *parent) : Service(parent) {
+    deviceInfo = QAudioDeviceInfo::defaultInputDevice();
+
     audioInput = nullptr;
     audioIODevice = nullptr;
 
@@ -48,7 +50,7 @@ const QAudioFormat &AudioSource::getAudioFormat() const {
 }
 
 void AudioSource::setAudioFormat(const QAudioFormat &value) {
-    AudioSource::audioFormat = value;
+    AudioSource::audioFormat = deviceInfo.nearestFormat(value);
 }
 
 quint64 AudioSource::getFrames() const {
@@ -60,14 +62,11 @@ quint64 AudioSource::getBytes() const {
 }
 
 void AudioSource::start() {
-    QAudioFormat requestedAudioFormat;
-    requestedAudioFormat.setChannelCount(1);
-    requestedAudioFormat.setSampleRate(48000);
-    requestedAudioFormat.setSampleSize(16);
-    requestedAudioFormat.setSampleType(QAudioFormat::SignedInt);
-    audioFormat = deviceInfo.nearestFormat(requestedAudioFormat);
+    qDebug() << "Source Audio device:" << deviceInfo.deviceName();
+    qDebug() << "Source Audio format:" << audioFormat;
 
     audioInput = new QAudioInput(deviceInfo, audioFormat);
+    audioInput->setBufferSize(AUDIO_BUFFER_INPUT);
 
     audioIODevice = audioInput->start();
     connect(audioIODevice, &QIODevice::readyRead, this, &AudioSource::readAudioBytes);
@@ -84,8 +83,11 @@ void AudioSource::readAudioBytes() {
     frames++;
 
     QByteArray rawData = audioIODevice->readAll();
+    int length = rawData.length();
+    if (length == 0)
+        return;
 
-    auto bytesRead = (qint32) rawData.length();
+    auto bytesRead = (qint32) length;
     bytes += bytesRead;
 
     QMetaObject::invokeMethod(this, "newFrame", Qt::QueuedConnection, Q_ARG(const QByteArray, rawData));

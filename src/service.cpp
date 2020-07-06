@@ -23,16 +23,12 @@
 using namespace audioreceiver;
 
 Service::Service(QObject *parent) : QObject() {
-    qDebug() << "Service constructor";
-
     thread = new QThread(parent);
     moveToThread(thread);
     thread->start();
 }
 
 Service::~Service() {
-    qDebug() << "Service destructor";
-
     thread->terminate();
     delete thread;
 }

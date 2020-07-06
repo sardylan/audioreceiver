@@ -28,6 +28,8 @@
 
 #include "service.hpp"
 
+#define AUDIO_BUFFER_INPUT 65536
+
 namespace audioreceiver {
 
     class AudioSource : public Service {

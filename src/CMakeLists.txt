@@ -6,6 +6,7 @@ add_executable(audiorecevier
         audio_source.cpp audio_source.hpp
         audio_destination.cpp audio_destination.hpp
         dsp.cpp dsp.hpp
+        bfo.cpp bfo.hpp
         audioreceiver.cpp audioreceiver.hpp)
 
 target_link_libraries(audiorecevier
