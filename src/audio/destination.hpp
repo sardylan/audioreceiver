@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__AUDIO_OUTPUT_H
-#define __AUDIORECEVIER__AUDIO_OUTPUT_H
+#ifndef __AUDIORECEVIER__AUDIO__OUTPUT_H
+#define __AUDIORECEVIER__AUDIO__OUTPUT_H
 
 #include <QtCore/QObject>
 #include <QtCore/QIODevice>
@@ -30,16 +30,16 @@
 
 #define AUDIO_BUFFER_OUTPUT 131072
 
-namespace audioreceiver {
+namespace audioreceiver::audio {
 
-    class AudioDestination : public Service {
+    class Destination : public Service {
     Q_OBJECT
 
     public:
 
-        explicit AudioDestination(QObject *parent = nullptr);
+        explicit Destination(QObject *parent = nullptr);
 
-        ~AudioDestination() override;
+        ~Destination() override;
 
         [[nodiscard]] const QAudioDeviceInfo &getDeviceInfo() const;
 

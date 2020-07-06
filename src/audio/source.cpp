@@ -18,11 +18,11 @@
 
 #include <QtCore/QDebug>
 
-#include "audio_source.hpp"
+#include "source.hpp"
 
-using namespace audioreceiver;
+using namespace audioreceiver::audio;
 
-AudioSource::AudioSource(QObject *parent) : Service(parent) {
+Source::Source(QObject *parent) : Service(parent) {
     deviceInfo = QAudioDeviceInfo::defaultInputDevice();
 
     audioInput = nullptr;
@@ -32,36 +32,36 @@ AudioSource::AudioSource(QObject *parent) : Service(parent) {
     bytes = 0;
 }
 
-AudioSource::~AudioSource() {
+Source::~Source() {
     delete audioInput;
     delete audioIODevice;
 }
 
-const QAudioDeviceInfo &AudioSource::getDeviceInfo() const {
+const QAudioDeviceInfo &Source::getDeviceInfo() const {
     return deviceInfo;
 }
 
-void AudioSource::setDeviceInfo(const QAudioDeviceInfo &value) {
-    AudioSource::deviceInfo = value;
+void Source::setDeviceInfo(const QAudioDeviceInfo &value) {
+    Source::deviceInfo = value;
 }
 
-const QAudioFormat &AudioSource::getAudioFormat() const {
+const QAudioFormat &Source::getAudioFormat() const {
     return audioFormat;
 }
 
-void AudioSource::setAudioFormat(const QAudioFormat &value) {
-    AudioSource::audioFormat = deviceInfo.nearestFormat(value);
+void Source::setAudioFormat(const QAudioFormat &value) {
+    Source::audioFormat = deviceInfo.nearestFormat(value);
 }
 
-quint64 AudioSource::getFrames() const {
+quint64 Source::getFrames() const {
     return frames;
 }
 
-quint64 AudioSource::getBytes() const {
+quint64 Source::getBytes() const {
     return bytes;
 }
 
-void AudioSource::start() {
+void Source::start() {
     qDebug() << "Source Audio device:" << deviceInfo.deviceName();
     qDebug() << "Source Audio format:" << audioFormat;
 
@@ -69,17 +69,17 @@ void AudioSource::start() {
     audioInput->setBufferSize(AUDIO_BUFFER_INPUT);
 
     audioIODevice = audioInput->start();
-    connect(audioIODevice, &QIODevice::readyRead, this, &AudioSource::readAudioBytes);
+    connect(audioIODevice, &QIODevice::readyRead, this, &Source::readAudioBytes);
 }
 
-void AudioSource::stop() {
-    disconnect(audioIODevice, &QIODevice::readyRead, this, &AudioSource::readAudioBytes);
+void Source::stop() {
+    disconnect(audioIODevice, &QIODevice::readyRead, this, &Source::readAudioBytes);
     audioInput->stop();
 
     audioInput->deleteLater();
 }
 
-void AudioSource::readAudioBytes() {
+void Source::readAudioBytes() {
     frames++;
 
     QByteArray rawData = audioIODevice->readAll();

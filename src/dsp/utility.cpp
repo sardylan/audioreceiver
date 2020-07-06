@@ -22,11 +22,11 @@
 #include <QtCore/QtEndian>
 #include <QtCore/QDataStream>
 
-#include "dsp.hpp"
+#include "utility.hpp"
 
-using namespace audioreceiver;
+using namespace audioreceiver::dsp;
 
-QList<qreal> DSP::bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat) {
+QList<qreal> Utility::bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat) {
     int dataLength = data.length();
     int sampleSize = audioFormat.sampleSize() / 8;
     qint32 frames = audioFormat.framesForBytes(dataLength);
@@ -111,7 +111,7 @@ QList<qreal> DSP::bytesToValues(const QByteArray &data, const QAudioFormat &audi
     return valueList;
 }
 
-QByteArray DSP::valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat) {
+QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat) {
     int sampleSize = audioFormat.sampleSize() / 8;
     int channels = audioFormat.channelCount();
     QAudioFormat::Endian endian = audioFormat.byteOrder();
@@ -167,7 +167,7 @@ QByteArray DSP::valuesToBytes(const QList<qreal> &values, const QAudioFormat &au
     return data;
 }
 
-double DSP::rms(const QList<qreal> &data) {
+double Utility::rms(const QList<qreal> &data) {
     qreal sum = 0;
 
     for (qreal item: data)

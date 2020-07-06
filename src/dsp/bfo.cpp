@@ -20,7 +20,7 @@
 
 #include "bfo.hpp"
 
-using namespace audioreceiver;
+using namespace audioreceiver::dsp;
 
 BFO::BFO(const int &sampleRate, QObject *parent) : QObject(parent), sampleRate(sampleRate) {
     phase = 0;
@@ -55,12 +55,15 @@ void BFO::setEnabled(bool value) {
 }
 
 QList<qreal> BFO::mix(const QList<qreal> &values) {
-    if (!enabled || frequency == 0)
+    if (frequency == 0)
         return values;
 
     int len = values.length();
 
     const QList<qreal> &beats = generateSine(len);
+
+    if (!enabled)
+        return values;
 
     QList<qreal> output;
 
@@ -78,7 +81,8 @@ QList<qreal> BFO::generateSine(int len) {
 
     for (int i = 0; i < len; i++) {
         qreal angle = pulse * ((qreal) i / sampleRate);
-        sine.append(qSin(angle + phase));
+        qreal value = qSin(angle + phase);
+        sine.append(value);
     }
 
     const qreal lastItem = sine.last();

@@ -16,17 +16,17 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP_H
-#define __AUDIORECEVIER__DSP_H
+#ifndef __AUDIORECEVIER__DSP__UTILITY_H
+#define __AUDIORECEVIER__DSP__UTILITY_H
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
 #include <QtMultimedia/QAudioFormat>
 
-namespace audioreceiver {
+namespace audioreceiver::dsp {
 
-    class DSP {
+    class Utility {
 
     public:
 

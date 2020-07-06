@@ -18,11 +18,11 @@
 
 #include <QtCore/QDebug>
 
-#include "audio_destination.hpp"
+#include "destination.hpp"
 
-using namespace audioreceiver;
+using namespace audioreceiver::audio;
 
-AudioDestination::AudioDestination(QObject *parent) : Service(parent) {
+Destination::Destination(QObject *parent) : Service(parent) {
     deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
 
     audioOutput = nullptr;
@@ -32,36 +32,36 @@ AudioDestination::AudioDestination(QObject *parent) : Service(parent) {
     bytes = 0;
 }
 
-AudioDestination::~AudioDestination() {
+Destination::~Destination() {
     delete audioOutput;
     delete audioIODevice;
 }
 
-const QAudioDeviceInfo &AudioDestination::getDeviceInfo() const {
+const QAudioDeviceInfo &Destination::getDeviceInfo() const {
     return deviceInfo;
 }
 
-void AudioDestination::setDeviceInfo(const QAudioDeviceInfo &value) {
-    AudioDestination::deviceInfo = value;
+void Destination::setDeviceInfo(const QAudioDeviceInfo &value) {
+    Destination::deviceInfo = value;
 }
 
-const QAudioFormat &AudioDestination::getAudioFormat() const {
+const QAudioFormat &Destination::getAudioFormat() const {
     return audioFormat;
 }
 
-void AudioDestination::setAudioFormat(const QAudioFormat &value) {
-    AudioDestination::audioFormat = deviceInfo.nearestFormat(value);
+void Destination::setAudioFormat(const QAudioFormat &value) {
+    Destination::audioFormat = deviceInfo.nearestFormat(value);
 }
 
-quint64 AudioDestination::getFrames() const {
+quint64 Destination::getFrames() const {
     return frames;
 }
 
-quint64 AudioDestination::getBytes() const {
+quint64 Destination::getBytes() const {
     return bytes;
 }
 
-void AudioDestination::start() {
+void Destination::start() {
     qDebug() << "Destination Audio device:" << deviceInfo.deviceName();
     qDebug() << "Destination Audio format:" << audioFormat;
 
@@ -71,7 +71,7 @@ void AudioDestination::start() {
     audioIODevice = audioOutput->start();
 }
 
-void AudioDestination::stop() {
+void Destination::stop() {
     audioOutput->stop();
 
     audioIODevice = nullptr;
@@ -79,7 +79,7 @@ void AudioDestination::stop() {
     audioOutput->deleteLater();
 }
 
-void AudioDestination::newFrame(const QByteArray &data) {
+void Destination::newFrame(const QByteArray &data) {
     if (audioIODevice == nullptr)
         return;
 

@@ -21,7 +21,7 @@
 #include <QtCore/QList>
 
 #include "audioreceiver.hpp"
-#include "dsp.hpp"
+#include "dsp/utility.hpp"
 
 using namespace audioreceiver;
 
@@ -95,12 +95,12 @@ int main(int argc, char **argv) {
 }
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
-    audioSource = new AudioSource();
-    audioDestination = new AudioDestination();
+    audioSource = new audio::Source();
+    audioDestination = new audio::Destination();
 
     bfo = nullptr;
 
-    connect(audioSource, &AudioSource::newFrame, this, &AudioReceiver::newFrame);
+    connect(audioSource, &audio::Source::newFrame, this, &AudioReceiver::newFrame);
 }
 
 AudioReceiver::~AudioReceiver() {
@@ -129,11 +129,11 @@ void AudioReceiver::start() {
     audioDestination->setDeviceInfo(QAudioDeviceInfo::defaultOutputDevice());
     audioDestination->setAudioFormat(audioFormat);
 
-    bfo = new BFO(audioFormat.sampleRate(), this);
+    bfo = new dsp::BFO(audioFormat.sampleRate(), this);
     bfo->setEnabled(true);
 
-    QMetaObject::invokeMethod(audioDestination, &AudioDestination::start, Qt::QueuedConnection);
-    QMetaObject::invokeMethod(audioSource, &AudioSource::start, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
 
     QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
 }
@@ -141,8 +141,8 @@ void AudioReceiver::start() {
 void AudioReceiver::stop() {
     qInfo() << "Audio Receiver Stop";
 
-    QMetaObject::invokeMethod(audioDestination, &AudioDestination::stop, Qt::QueuedConnection);
-    QMetaObject::invokeMethod(audioSource, &AudioSource::stop, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(audioDestination, &audio::Destination::stop, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(audioSource, &audio::Source::stop, Qt::QueuedConnection);
 
     bfo->deleteLater();
 
@@ -150,12 +150,12 @@ void AudioReceiver::stop() {
 }
 
 void AudioReceiver::newFrame(const QByteArray &data) {
-    QList<qreal> values = DSP::bytesToValues(data, audioSource->getAudioFormat());
-    qreal inputRms = DSP::rms(values);
+    QList<qreal> values = dsp::Utility::bytesToValues(data, audioSource->getAudioFormat());
+    qreal inputRms = dsp::Utility::rms(values);
 
     QList<qreal> newValues = bfo->mix(values);
 
-    QByteArray outputData = DSP::valuesToBytes(newValues, audioDestination->getAudioFormat());
+    QByteArray outputData = dsp::Utility::valuesToBytes(newValues, audioDestination->getAudioFormat());
 
     QMetaObject::invokeMethod(audioDestination, "newFrame", Qt::QueuedConnection, Q_ARG(const QByteArray, outputData));
 

@@ -21,9 +21,9 @@
 
 #include <QtCore/QObject>
 
-#include "audio_source.hpp"
-#include "audio_destination.hpp"
-#include "bfo.hpp"
+#include "audio/source.hpp"
+#include "audio/destination.hpp"
+#include "dsp/bfo.hpp"
 
 #ifdef Q_OS_LINUX
 
@@ -58,10 +58,10 @@ namespace audioreceiver {
 
     private:
 
-        AudioSource *audioSource;
-        AudioDestination *audioDestination;
+        audio::Source *audioSource;
+        audio::Destination *audioDestination;
 
-        BFO *bfo;
+        dsp::BFO *bfo;
 
     private slots:
 

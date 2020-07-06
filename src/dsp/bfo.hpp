@@ -16,13 +16,13 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__BFO_H
-#define __AUDIORECEVIER__BFO_H
+#ifndef __AUDIORECEVIER__DSP__BFO_H
+#define __AUDIORECEVIER__DSP__BFO_H
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
-namespace audioreceiver {
+namespace audioreceiver::dsp {
 
     class BFO : public QObject {
     Q_OBJECT
