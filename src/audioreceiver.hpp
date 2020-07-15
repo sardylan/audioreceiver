@@ -67,6 +67,8 @@ namespace audioreceiver {
 
         void newFrame(const QByteArray &data);
 
+        void newMixedValues(const QList<qreal> &newValues);
+
     signals:
 
         void started();
@@ -76,5 +78,7 @@ namespace audioreceiver {
     };
 
 }
+
+Q_DECLARE_METATYPE(QList<qreal>);
 
 #endif

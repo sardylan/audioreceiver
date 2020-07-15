@@ -35,11 +35,13 @@ extern "C" {
 #include <QtCore/QList>
 #include <QtCore/QSemaphore>
 
-#include "service.hpp"
+#include "../utilities/service.hpp"
+
+using namespace audioreceiver;
 
 namespace audioreceiver::dsp {
 
-    class FFT : public Service {
+    class FFT : public utilities::Service {
     Q_OBJECT
 
     public:

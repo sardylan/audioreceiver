@@ -16,27 +16,32 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__UTILITY_H
-#define __AUDIORECEVIER__DSP__UTILITY_H
+#ifndef __AUDIORECEVIER__SERVICE_H
+#define __AUDIORECEVIER__SERVICE_H
 
 #include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QtCore/QThread>
 
-#include <QtMultimedia/QAudioFormat>
+namespace audioreceiver::utilities {
 
-namespace audioreceiver::dsp {
-
-    class Utility {
+    class Service : public QObject {
+    Q_OBJECT
 
     public:
 
-        static QList<qreal> bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat);
+        explicit Service(QObject *parent);
 
-        static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
+        ~Service() override;
 
-        static qreal rms(const QList<qreal> &data);
+    public slots:
 
-        static QList<qreal> convolve(const QList<qreal>& kernel, const QList<qreal>& input);
+        virtual void start() = 0;
+
+        virtual void stop() = 0;
+
+    private:
+
+        QThread *thread;
 
     };
 

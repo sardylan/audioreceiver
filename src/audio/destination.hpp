@@ -26,13 +26,15 @@
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioOutput>
 
-#include "service.hpp"
+#include "../utilities/service.hpp"
 
 #define AUDIO_BUFFER_OUTPUT 131072
 
+using namespace audioreceiver;
+
 namespace audioreceiver::audio {
 
-    class Destination : public Service {
+    class Destination : public utilities::Service {
     Q_OBJECT
 
     public:

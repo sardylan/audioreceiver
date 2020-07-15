@@ -16,35 +16,19 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__SERVICE_H
-#define __AUDIORECEVIER__SERVICE_H
+#include <QtCore/QDebug>
 
-#include <QtCore/QObject>
-#include <QtCore/QThread>
+#include "service.hpp"
 
-namespace audioreceiver {
+using namespace audioreceiver::utilities;
 
-    class Service : public QObject {
-    Q_OBJECT
-
-    public:
-
-        explicit Service(QObject *parent);
-
-        ~Service() override;
-
-    public slots:
-
-        virtual void start() = 0;
-
-        virtual void stop() = 0;
-
-    private:
-
-        QThread *thread;
-
-    };
-
+Service::Service(QObject *parent) : QObject() {
+    thread = new QThread(parent);
+    moveToThread(thread);
+    thread->start();
 }
 
-#endif
+Service::~Service() {
+    thread->terminate();
+    delete thread;
+}

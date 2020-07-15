@@ -16,27 +16,33 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__UTILITY_H
-#define __AUDIORECEVIER__DSP__UTILITY_H
+#ifndef __AUDIORECEVIER__UTILITIES__ASYNC_COMPUTE_H
+#define __AUDIORECEVIER__UTILITIES__ASYNC_COMPUTE_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#include "service.hpp"
 
-#include <QtMultimedia/QAudioFormat>
+using namespace audioreceiver;
 
-namespace audioreceiver::dsp {
+namespace audioreceiver::utilities {
 
-    class Utility {
+    class AsyncCompute : public utilities::Service {
+    Q_OBJECT
 
     public:
 
-        static QList<qreal> bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat);
+        explicit AsyncCompute(QObject *parent = nullptr);
 
-        static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
+        ~AsyncCompute() override;
 
-        static qreal rms(const QList<qreal> &data);
+        void start() override;
 
-        static QList<qreal> convolve(const QList<qreal>& kernel, const QList<qreal>& input);
+        void stop() override;
+
+        virtual void execute(const QList<qreal> &data) = 0;
+
+    signals:
+
+        virtual void newComputedValues(const QList<qreal> &data) = 0;
 
     };
 

@@ -16,30 +16,20 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__UTILITY_H
-#define __AUDIORECEVIER__DSP__UTILITY_H
+#include "frame.hpp"
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+using namespace audioreceiver::model;
 
-#include <QtMultimedia/QAudioFormat>
+Frame::Frame(QList<qreal> values, QDateTime dateTime) :
+        dateTime(qMove(dateTime)),
+        values(qMove(values)) {}
 
-namespace audioreceiver::dsp {
+Frame::~Frame() = default;
 
-    class Utility {
-
-    public:
-
-        static QList<qreal> bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat);
-
-        static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
-
-        static qreal rms(const QList<qreal> &data);
-
-        static QList<qreal> convolve(const QList<qreal>& kernel, const QList<qreal>& input);
-
-    };
-
+const QDateTime &Frame::getDateTime() const {
+    return dateTime;
 }
 
-#endif
+const QList<qreal> &Frame::getValues() const {
+    return values;
+}

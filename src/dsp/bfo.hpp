@@ -22,9 +22,13 @@
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
+#include "../utilities/service.hpp"
+
+using namespace audioreceiver;
+
 namespace audioreceiver::dsp {
 
-    class BFO : public QObject {
+    class BFO : public utilities::Service {
     Q_OBJECT
 
     public:
@@ -45,7 +49,13 @@ namespace audioreceiver::dsp {
 
         void setFrequency(unsigned int value);
 
-        QList<qreal> mix(const QList<qreal> &values);
+        void start() override;
+
+        void stop() override;
+
+    public slots:
+
+        void mix(const QList<qreal> &values);
 
     private:
 
@@ -57,6 +67,10 @@ namespace audioreceiver::dsp {
         bool enabled;
 
         QList<qreal> generateSine(int len);
+
+    signals:
+
+        void newMixedValues(const QList<qreal> &values);
 
     };
 

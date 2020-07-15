@@ -26,13 +26,15 @@
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioInput>
 
-#include "service.hpp"
+#include "../utilities/service.hpp"
 
 #define AUDIO_BUFFER_INPUT 65536
 
+using namespace audioreceiver;
+
 namespace audioreceiver::audio {
 
-    class Source : public Service {
+    class Source : public utilities::Service {
     Q_OBJECT
 
     public:

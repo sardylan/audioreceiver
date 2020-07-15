@@ -131,6 +131,9 @@ void AudioReceiver::start() {
 
     bfo = new dsp::BFO(audioFormat.sampleRate(), this);
     bfo->setEnabled(true);
+    bfo->setFrequency(16500);
+
+    connect(bfo, &dsp::BFO::newMixedValues, this, &AudioReceiver::newMixedValues);
 
     QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
@@ -153,17 +156,21 @@ void AudioReceiver::newFrame(const QByteArray &data) {
     QList<qreal> values = dsp::Utility::bytesToValues(data, audioSource->getAudioFormat());
     qreal inputRms = dsp::Utility::rms(values);
 
-    QList<qreal> newValues = bfo->mix(values);
+    QMetaObject::invokeMethod(bfo, "mix", Qt::QueuedConnection, Q_ARG(QList<qreal>, values));
 
+    qDebug()
+            << "Input size:" << data.length()
+            << "-"
+            << "Input RMS:" << inputRms;
+}
+
+void AudioReceiver::newMixedValues(const QList<qreal> &newValues) {
     QByteArray outputData = dsp::Utility::valuesToBytes(newValues, audioDestination->getAudioFormat());
 
     QMetaObject::invokeMethod(audioDestination, "newFrame", Qt::QueuedConnection, Q_ARG(const QByteArray, outputData));
 
     qDebug()
-            << "Input size:" << data.length()
-            << "-"
-            << "Input RMS:" << inputRms
+            << "New values:" << newValues.length()
             << "-"
             << "Output size:" << outputData.length();
-
 }

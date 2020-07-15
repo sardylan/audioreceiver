@@ -16,30 +16,19 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__UTILITY_H
-#define __AUDIORECEVIER__DSP__UTILITY_H
+#include "rms.hpp"
+#include "utility.hpp"
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+using namespace audioreceiver::dsp;
 
-#include <QtMultimedia/QAudioFormat>
-
-namespace audioreceiver::dsp {
-
-    class Utility {
-
-    public:
-
-        static QList<qreal> bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat);
-
-        static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
-
-        static qreal rms(const QList<qreal> &data);
-
-        static QList<qreal> convolve(const QList<qreal>& kernel, const QList<qreal>& input);
-
-    };
+RMS::RMS(QObject *parent) : AsyncCompute(parent) {
 
 }
 
-#endif
+RMS::~RMS() = default;
+
+void RMS::execute(const QList<qreal> &data) {
+    qreal rms = Utility::rms(data);
+
+    QMetaObject::invokeMethod(this, "newComputedValues", Qt::QueuedConnection, Q_ARG(qreal, rms));
+}

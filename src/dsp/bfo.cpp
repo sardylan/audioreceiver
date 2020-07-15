@@ -22,7 +22,7 @@
 
 using namespace audioreceiver::dsp;
 
-BFO::BFO(const int &sampleRate, QObject *parent) : QObject(parent), sampleRate(sampleRate) {
+BFO::BFO(const int &sampleRate, QObject *parent) : Service(parent), sampleRate(sampleRate) {
     phase = 0;
     frequency = 100;
     enabled = false;
@@ -54,23 +54,31 @@ void BFO::setEnabled(bool value) {
     BFO::enabled = value;
 }
 
-QList<qreal> BFO::mix(const QList<qreal> &values) {
+void BFO::start() {
+
+}
+
+void BFO::stop() {
+
+}
+
+void BFO::mix(const QList<qreal> &values) {
     if (frequency == 0)
-        return values;
+        return;
 
     int len = values.length();
 
     const QList<qreal> &beats = generateSine(len);
 
     if (!enabled)
-        return values;
+        return;
 
     QList<qreal> output;
 
     for (int i = 0; i < values.length() && i < beats.length(); i++)
         output.append(values[i] * beats[i]);
 
-    return output;
+    QMetaObject::invokeMethod(this, "newMixedValues", Qt::QueuedConnection, Q_ARG(const QList<qreal>, output));
 }
 
 

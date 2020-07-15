@@ -16,19 +16,32 @@
  *
  */
 
-#include <QtCore/QDebug>
+#ifndef __AUDIORECEVIER__DSP__RMS_H
+#define __AUDIORECEVIER__DSP__RMS_H
 
-#include "service.hpp"
+#include "../utilities/async_compute.hpp"
 
 using namespace audioreceiver;
 
-Service::Service(QObject *parent) : QObject() {
-    thread = new QThread(parent);
-    moveToThread(thread);
-    thread->start();
+namespace audioreceiver::dsp {
+
+    class RMS : public utilities::AsyncCompute {
+    Q_OBJECT
+
+    public:
+
+        explicit RMS(QObject *parent = nullptr);
+
+        ~RMS() override;
+
+        void execute(const QList<qreal> &data) override;
+
+    signals:
+
+        void newComputedValues(const QList<qreal> &data) override;
+
+    };
+
 }
 
-Service::~Service() {
-    thread->terminate();
-    delete thread;
-}
+#endif
