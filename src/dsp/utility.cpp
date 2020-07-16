@@ -186,19 +186,3 @@ qreal Utility::rms(const QList<qreal> &data) {
 
     return root;
 }
-
-QList<qreal> Utility::convolve(const QList<qreal> &kernel, const QList<qreal> &input) {
-    int len = input.length() + (kernel.length() - 1);
-
-    QList<qreal> output;
-    output.reserve(len);
-
-    for (int i = 0; i < input.length(); i++) {
-        auto &inputSample = const_cast<qreal &>(input[i]);
-
-        for (int j = 0; j < kernel.length(); j++)
-            output[i + j] = output[i + j] + (inputSample * kernel[j]);
-    }
-
-    return output;
-}

@@ -36,8 +36,6 @@ namespace audioreceiver::dsp {
 
         static qreal rms(const QList<qreal> &data);
 
-        static QList<qreal> convolve(const QList<qreal>& kernel, const QList<qreal>& input);
-
     };
 
 }

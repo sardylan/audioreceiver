@@ -28,7 +28,17 @@ FIR::FIR(const QList<qreal> &kernel, QObject *parent) : QObject(parent), kernel(
 FIR::~FIR() = default;
 
 QList<qreal> FIR::compute(const QList<qreal> &input) {
-    QList<qreal> output = Utility::convolve(kernel, input);
+    int len = input.length() + (kernel.length() - 1);
+
+    QList<qreal> output;
+    output.reserve(len);
+
+    for (int i = 0; i < input.length(); i++) {
+        auto &inputSample = const_cast<qreal &>(input[i]);
+
+        for (int j = 0; j < kernel.length(); j++)
+            output[i + j] = output[i + j] + (inputSample * kernel[j]);
+    }
 
     return output;
 }
