@@ -16,33 +16,35 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__UTILITIES__ASYNC_COMPUTE_H
-#define __AUDIORECEVIER__UTILITIES__ASYNC_COMPUTE_H
+#ifndef __AUDIORECEVIER__DSP__RMS_H
+#define __AUDIORECEVIER__DSP__RMS_H
 
-#include "service.hpp"
+#include "../utilities/service.hpp"
 
 using namespace audioreceiver;
 
-namespace audioreceiver::utilities {
+namespace audioreceiver::dsp {
 
-    class AsyncCompute : public utilities::Service {
+    class FIR : public utilities::Service {
     Q_OBJECT
 
     public:
 
-        explicit AsyncCompute(QObject *parent = nullptr);
+        explicit FIR(const QList<qreal> &kernel, QObject *parent = nullptr);
 
-        ~AsyncCompute() override;
+        ~FIR() override;
 
-        void start() override;
+    public slots:
 
-        void stop() override;
+        void execute(const QList<qreal> &data);
 
-        virtual void execute(const QList<qreal> &data) = 0;
+    private:
+
+        const QList<qreal> &kernel;
 
     signals:
 
-        virtual void newComputedValues(const QList<qreal> &data) = 0;
+        void newValues(const QList<qreal> &data);
 
     };
 

@@ -55,7 +55,7 @@ namespace audioreceiver::dsp {
 
     public slots:
 
-        void mix(const QList<qreal> &values);
+        void execute(const QList<qreal> &values);
 
     private:
 
@@ -70,7 +70,7 @@ namespace audioreceiver::dsp {
 
     signals:
 
-        void newMixedValues(const QList<qreal> &values);
+        void newValues(const QList<qreal> &values);
 
     };
 

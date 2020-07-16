@@ -36,11 +36,11 @@ FFT::~FFT() {
     fftw_free(output);
 }
 
-QList<qreal> FFT::execute(const QList<qreal> &data) {
+void FFT::execute(const QList<qreal> &data) {
     fftLock.acquire();
 
     for (unsigned int i = 0; i < size; i++)
-        input[i] = data[(int) i];
+        input[i] = (double) data[(int) i];
 
     fftw_execute(plan);
 
@@ -49,13 +49,13 @@ QList<qreal> FFT::execute(const QList<qreal> &data) {
     unsigned int samples = size / 2;
 
     for (unsigned int i = 0; i <= samples; i++) {
-        qreal re = output[i];
-        qreal im = output[size - i];
+        auto re = (qreal) output[i];
+        auto im = (qreal) output[size - i];
         qreal magnitude = qSqrt((re * re) + (im * im));
         fft.append(magnitude);
     }
 
     fftLock.release();
 
-    return fft;
+    QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(QList<qreal>, fft));
 }

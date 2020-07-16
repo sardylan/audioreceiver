@@ -34,11 +34,13 @@ namespace audioreceiver::dsp {
 
         ~RMS() override;
 
+    public slots:
+
         void execute(const QList<qreal> &data) override;
 
     signals:
 
-        void newComputedValues(const QList<qreal> &data) override;
+        void newComputedValues(const qreal &data) override;
 
     };
 

@@ -1,9 +1,8 @@
 find_package(Qt5 REQUIRED
-        COMPONENTS Core Multimedia)
+        COMPONENTS Core)
 
 add_library(utilities
-        service.cpp service.hpp
-        async_compute.cpp async_compute.hpp)
+        service.cpp service.hpp)
 
 target_link_libraries(utilities
         Qt5::Core)

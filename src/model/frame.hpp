@@ -23,8 +23,6 @@
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
 
-#include "utilities/service.hpp"
-
 namespace audioreceiver::model {
 
     class Frame {

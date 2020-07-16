@@ -62,7 +62,7 @@ void BFO::stop() {
 
 }
 
-void BFO::mix(const QList<qreal> &values) {
+void BFO::execute(const QList<qreal> &values) {
     if (frequency == 0)
         return;
 
@@ -78,7 +78,7 @@ void BFO::mix(const QList<qreal> &values) {
     for (int i = 0; i < values.length() && i < beats.length(); i++)
         output.append(values[i] * beats[i]);
 
-    QMetaObject::invokeMethod(this, "newMixedValues", Qt::QueuedConnection, Q_ARG(const QList<qreal>, output));
+    QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(const QList<qreal>, output));
 }
 
 

@@ -16,20 +16,19 @@
  *
  */
 
-#include "async_compute.hpp"
+#include "fir.hpp"
+#include "utility.hpp"
 
-using namespace audioreceiver::utilities;
+using namespace audioreceiver::dsp;
 
-AsyncCompute::AsyncCompute(QObject *parent) : Service(parent) {
-
-}
-
-AsyncCompute::~AsyncCompute() = default;
-
-void AsyncCompute::start() {
+FIR::FIR(const QList<qreal> &kernel, QObject *parent) : Service(parent), kernel(kernel) {
 
 }
 
-void AsyncCompute::stop() {
+FIR::~FIR() = default;
 
+void FIR::execute(const QList<qreal> &data) {
+    QList<qreal> output = Utility::convolve(data);
+
+    QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(QList<qreal>, output));
 }

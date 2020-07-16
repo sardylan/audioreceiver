@@ -50,7 +50,9 @@ namespace audioreceiver::dsp {
 
         ~FFT() override;
 
-        QList<qreal> execute(const QList<qreal> &data);
+    public slots:
+
+        void execute(const QList<qreal> &data);
 
     private:
 
@@ -62,6 +64,10 @@ namespace audioreceiver::dsp {
         fftw_plan plan;
 
         QSemaphore fftLock;
+
+    signals:
+
+        void newValues(const QList<qreal> &data);
 
     };
 

@@ -133,7 +133,7 @@ void AudioReceiver::start() {
     bfo->setEnabled(true);
     bfo->setFrequency(16500);
 
-    connect(bfo, &dsp::BFO::newMixedValues, this, &AudioReceiver::newMixedValues);
+    connect(bfo, &dsp::BFO::newComputedValues, this, &AudioReceiver::newMixedValues);
 
     QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
