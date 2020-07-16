@@ -21,12 +21,15 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QIODevice>
+#include <QtCore/QQueue>
 
 #include <QtMultimedia/QAudioDeviceInfo>
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioInput>
 
 #include "../utilities/service.hpp"
+
+#include "../model/frame.hpp"
 
 #define AUDIO_BUFFER_INPUT 65536
 
@@ -39,9 +42,11 @@ namespace audioreceiver::audio {
 
     public:
 
-        explicit Source(QObject *parent = nullptr);
+        explicit Source(const int &frameSize, QObject *parent = nullptr);
 
         ~Source() override;
+
+        [[nodiscard]] int getFrameSize() const;
 
         [[nodiscard]] const QAudioDeviceInfo &getDeviceInfo() const;
 
@@ -63,6 +68,8 @@ namespace audioreceiver::audio {
 
     private:
 
+        const int frameSize;
+
         QAudioDeviceInfo deviceInfo;
         QAudioFormat audioFormat;
 
@@ -72,13 +79,15 @@ namespace audioreceiver::audio {
         quint64 frames;
         quint64 bytes;
 
+        QQueue<char> *buffer;
+
     private slots:
 
         void readAudioBytes();
 
     signals:
 
-        void newFrame(const QByteArray &data);
+        void newFrame(const audioreceiver::model::Frame &frame);
 
     };
 

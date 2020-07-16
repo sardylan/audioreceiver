@@ -21,14 +21,14 @@
 
 using namespace audioreceiver::dsp;
 
-FIR::FIR(const QList<qreal> &kernel, QObject *parent) : Service(parent), kernel(kernel) {
+FIR::FIR(const QList<qreal> &kernel, QObject *parent) : QObject(parent), kernel(kernel) {
 
 }
 
 FIR::~FIR() = default;
 
-void FIR::execute(const QList<qreal> &data) {
-    QList<qreal> output = Utility::convolve(data);
+QList<qreal> FIR::compute(const QList<qreal> &input) {
+    QList<qreal> output = Utility::convolve(kernel, input);
 
-    QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(QList<qreal>, output));
+    return output;
 }

@@ -4,13 +4,14 @@ add_subdirectory(dsp)
 add_subdirectory(audio)
 
 find_package(Qt5 REQUIRED
-        COMPONENTS Core)
+        COMPONENTS Core Concurrent)
 
 add_executable(audiorecevier
         audioreceiver.cpp audioreceiver.hpp)
 
 target_link_libraries(audiorecevier
         Qt5::Core
+        Qt5::Concurrent
         utilities
         model
         dsp

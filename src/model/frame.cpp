@@ -20,11 +20,15 @@
 
 using namespace audioreceiver::model;
 
+Frame::Frame() = default;
+
+Frame::~Frame() = default;
+
+Frame::Frame(const Frame &frame) = default;
+
 Frame::Frame(QList<qreal> values, QDateTime dateTime) :
         dateTime(qMove(dateTime)),
         values(qMove(values)) {}
-
-Frame::~Frame() = default;
 
 const QDateTime &Frame::getDateTime() const {
     return dateTime;
@@ -32,4 +36,9 @@ const QDateTime &Frame::getDateTime() const {
 
 const QList<qreal> &Frame::getValues() const {
     return values;
+}
+
+QDebug operator<<(QDebug dbg, const audioreceiver::model::Frame &frame) {
+    dbg << frame.getDateTime();
+    return dbg.maybeSpace();
 }

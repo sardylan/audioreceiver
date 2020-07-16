@@ -16,16 +16,14 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__RMS_H
-#define __AUDIORECEVIER__DSP__RMS_H
+#ifndef __AUDIORECEVIER__DSP__FIR_H
+#define __AUDIORECEVIER__DSP__FIR_H
 
-#include "../utilities/service.hpp"
-
-using namespace audioreceiver;
+#include <QtCore/QObject>
 
 namespace audioreceiver::dsp {
 
-    class FIR : public utilities::Service {
+    class FIR : public QObject {
     Q_OBJECT
 
     public:
@@ -36,15 +34,11 @@ namespace audioreceiver::dsp {
 
     public slots:
 
-        void execute(const QList<qreal> &data);
+        QList<qreal> compute(const QList<qreal> &input);
 
     private:
 
         const QList<qreal> &kernel;
-
-    signals:
-
-        void newValues(const QList<qreal> &data);
 
     };
 

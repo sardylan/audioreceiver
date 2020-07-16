@@ -8,7 +8,8 @@ add_library(audio
 target_link_libraries(audio
         Qt5::Core
         Qt5::Multimedia
-        utilities)
+        utilities
+        dsp)
 
 target_compile_options(audio
         PRIVATE

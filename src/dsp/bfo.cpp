@@ -16,13 +16,14 @@
  *
  */
 
+#include <QtCore/QDebug>
 #include <QtCore/QtMath>
 
 #include "bfo.hpp"
 
 using namespace audioreceiver::dsp;
 
-BFO::BFO(const int &sampleRate, QObject *parent) : Service(parent), sampleRate(sampleRate) {
+BFO::BFO(const int &sampleRate, QObject *parent) : QObject(parent), sampleRate(sampleRate) {
     phase = 0;
     frequency = 100;
     enabled = false;
@@ -54,31 +55,27 @@ void BFO::setEnabled(bool value) {
     BFO::enabled = value;
 }
 
-void BFO::start() {
+QList<qreal> BFO::compute(const QList<qreal> &values) {
+    qDebug() << "BFO start";
 
-}
+    QList<qreal> output;
 
-void BFO::stop() {
-
-}
-
-void BFO::execute(const QList<qreal> &values) {
     if (frequency == 0)
-        return;
+        return output;
 
     int len = values.length();
 
     const QList<qreal> &beats = generateSine(len);
 
     if (!enabled)
-        return;
-
-    QList<qreal> output;
+        return output;
 
     for (int i = 0; i < values.length() && i < beats.length(); i++)
         output.append(values[i] * beats[i]);
 
-    QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(const QList<qreal>, output));
+    qDebug() << "BFO end";
+
+    return output;
 }
 
 

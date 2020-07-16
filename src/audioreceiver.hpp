@@ -23,7 +23,11 @@
 
 #include "audio/source.hpp"
 #include "audio/destination.hpp"
+
 #include "dsp/bfo.hpp"
+#include "dsp/fft.hpp"
+
+#include "model/frame.hpp"
 
 #ifdef Q_OS_LINUX
 
@@ -40,6 +44,8 @@ void signalHandler(int signal);
 BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 
 #endif
+
+#define AUDIORECEIVER_FRAME_SIZE 1024
 
 namespace audioreceiver {
 
@@ -62,12 +68,11 @@ namespace audioreceiver {
         audio::Destination *audioDestination;
 
         dsp::BFO *bfo;
+        dsp::FFT *fft;
 
     private slots:
 
-        void newFrame(const QByteArray &data);
-
-        void newMixedValues(const QList<qreal> &newValues);
+        void newFrame(const model::Frame &frame);
 
     signals:
 

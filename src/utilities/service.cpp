@@ -30,5 +30,5 @@ Service::Service(QObject *parent) : QObject() {
 
 Service::~Service() {
     thread->terminate();
-    delete thread;
+    thread->deleteLater();
 }

@@ -19,9 +19,14 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 #include <QtCore/QList>
+#include <QtCore/QFuture>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include "audioreceiver.hpp"
+
 #include "dsp/utility.hpp"
+
+#include "model/frame.hpp"
 
 using namespace audioreceiver;
 
@@ -74,6 +79,8 @@ int main(int argc, char **argv) {
                        "[\x1b[97m%{function}()\x1b[39m] "
                        "%{message}");
 
+    qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
+
     QCoreApplication coreApplication(argc, argv);
 
     audioReceiver = new AudioReceiver();
@@ -95,10 +102,11 @@ int main(int argc, char **argv) {
 }
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
-    audioSource = new audio::Source();
+    audioSource = new audio::Source(AUDIORECEIVER_FRAME_SIZE);
     audioDestination = new audio::Destination();
 
     bfo = nullptr;
+    fft = nullptr;
 
     connect(audioSource, &audio::Source::newFrame, this, &AudioReceiver::newFrame);
 }
@@ -108,6 +116,7 @@ AudioReceiver::~AudioReceiver() {
     delete audioDestination;
 
     delete bfo;
+    delete fft;
 };
 
 void AudioReceiver::start() {
@@ -133,7 +142,7 @@ void AudioReceiver::start() {
     bfo->setEnabled(true);
     bfo->setFrequency(16500);
 
-    connect(bfo, &dsp::BFO::newComputedValues, this, &AudioReceiver::newMixedValues);
+    fft = new dsp::FFT(AUDIORECEIVER_FRAME_SIZE);
 
     QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
@@ -152,25 +161,24 @@ void AudioReceiver::stop() {
     QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
 }
 
-void AudioReceiver::newFrame(const QByteArray &data) {
-    QList<qreal> values = dsp::Utility::bytesToValues(data, audioSource->getAudioFormat());
-    qreal inputRms = dsp::Utility::rms(values);
+void AudioReceiver::newFrame(const model::Frame &frame) {
+    QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rms, frame.getValues());
+    QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, frame.getValues());
+    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::compute, frame.getValues());
 
-    QMetaObject::invokeMethod(bfo, "mix", Qt::QueuedConnection, Q_ARG(QList<qreal>, values));
+    qreal rms = rmsFuture.result();
+    QList<qreal> newValues = bfoFuture.result();
+    QList<qreal> fftValues = fftFuture.result();
+
+    QMetaObject::invokeMethod(
+            audioDestination,
+            "newValues",
+            Qt::QueuedConnection,
+            Q_ARG(const QList<qreal>, newValues)
+    );
 
     qDebug()
-            << "Input size:" << data.length()
+            << "Frame:" << frame
             << "-"
-            << "Input RMS:" << inputRms;
-}
-
-void AudioReceiver::newMixedValues(const QList<qreal> &newValues) {
-    QByteArray outputData = dsp::Utility::valuesToBytes(newValues, audioDestination->getAudioFormat());
-
-    QMetaObject::invokeMethod(audioDestination, "newFrame", Qt::QueuedConnection, Q_ARG(const QByteArray, outputData));
-
-    qDebug()
-            << "New values:" << newValues.length()
-            << "-"
-            << "Output size:" << outputData.length();
+            << "RMS:" << rms;
 }

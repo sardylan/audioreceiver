@@ -61,7 +61,7 @@ namespace audioreceiver::audio {
 
         void stop() override;
 
-        void newFrame(const QByteArray &data);
+        void newValues(const QList<qreal> &values);
 
     private:
 

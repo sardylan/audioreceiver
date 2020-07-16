@@ -18,11 +18,13 @@
 
 #include <QtCore/QtMath>
 
+#include <QtCore/QDebug>
+
 #include "fft.hpp"
 
 using namespace audioreceiver::dsp;
 
-FFT::FFT(const unsigned int &size, QObject *parent) : Service(parent), size(size) {
+FFT::FFT(const unsigned int &size, QObject *parent) : QObject(parent), size(size) {
     input = (double *) fftw_malloc(sizeof(double) * FFT::size);
     output = (double *) fftw_malloc(sizeof(double) * FFT::size);
 
@@ -36,8 +38,10 @@ FFT::~FFT() {
     fftw_free(output);
 }
 
-void FFT::execute(const QList<qreal> &data) {
-    fftLock.acquire();
+QList<qreal> FFT::compute(const QList<qreal> &data) {
+    qDebug() << "FFT start";
+
+    fftLock.lock();
 
     for (unsigned int i = 0; i < size; i++)
         input[i] = (double) data[(int) i];
@@ -55,7 +59,9 @@ void FFT::execute(const QList<qreal> &data) {
         fft.append(magnitude);
     }
 
-    fftLock.release();
+    fftLock.unlock();
 
-    QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(QList<qreal>, fft));
+    qDebug() << "FFT end";
+
+    return fft;
 }

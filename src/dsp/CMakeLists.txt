@@ -7,15 +7,13 @@ find_package(FFTW REQUIRED
 add_library(dsp
         bfo.cpp bfo.hpp
         fft.cpp fft.hpp
-        rms.cpp rms.hpp
         fir.cpp fir.hpp
         utility.cpp utility.hpp)
 
 target_link_libraries(dsp
         Qt5::Core
         FFTW::Double
-        FFTW::DoubleThreads
-        utilities)
+        FFTW::DoubleThreads)
 
 target_compile_options(dsp
         PRIVATE

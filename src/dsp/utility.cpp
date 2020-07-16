@@ -16,6 +16,7 @@
  *
  */
 
+#include <QtCore/QDebug>
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
 #include <QtCore/QtMath>
@@ -168,6 +169,8 @@ QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat
 }
 
 qreal Utility::rms(const QList<qreal> &data) {
+    qDebug() << "RMS start";
+
     qreal sum = 0;
 
     for (qreal item: data)
@@ -178,6 +181,8 @@ qreal Utility::rms(const QList<qreal> &data) {
 
     qreal mean = sum / data.length();
     qreal root = qSqrt(mean);
+
+    qDebug() << "RMS end";
 
     return root;
 }

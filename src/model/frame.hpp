@@ -20,6 +20,7 @@
 #define __AUDIORECEVIER__MODEL__FRAME_H
 
 #include <QtCore/QtGlobal>
+#include <QtCore/QtDebug>
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
 
@@ -29,9 +30,13 @@ namespace audioreceiver::model {
 
     public:
 
-        explicit Frame(QList<qreal> values, QDateTime dateTime = QDateTime::currentDateTimeUtc());
+        Frame();
 
         ~Frame();
+
+        Frame(const Frame &frame);
+
+        Frame(QList<qreal> values, QDateTime dateTime = QDateTime::currentDateTimeUtc());
 
         [[nodiscard]] const QDateTime &getDateTime() const;
 
@@ -45,5 +50,9 @@ namespace audioreceiver::model {
     };
 
 }
+
+Q_DECLARE_METATYPE(audioreceiver::model::Frame)
+
+QDebug operator<<(QDebug dbg, const audioreceiver::model::Frame &frame);
 
 #endif

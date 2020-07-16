@@ -20,9 +20,11 @@
 
 #include "source.hpp"
 
+#include "../dsp/utility.hpp"
+
 using namespace audioreceiver::audio;
 
-Source::Source(QObject *parent) : Service(parent) {
+Source::Source(const int &frameSize, QObject *parent) : Service(parent), frameSize(frameSize) {
     deviceInfo = QAudioDeviceInfo::defaultInputDevice();
 
     audioInput = nullptr;
@@ -30,11 +32,17 @@ Source::Source(QObject *parent) : Service(parent) {
 
     frames = 0;
     bytes = 0;
+
+    buffer = nullptr;
 }
 
 Source::~Source() {
     delete audioInput;
     delete audioIODevice;
+}
+
+int Source::getFrameSize() const {
+    return frameSize;
 }
 
 const QAudioDeviceInfo &Source::getDeviceInfo() const {
@@ -68,6 +76,8 @@ void Source::start() {
     audioInput = new QAudioInput(deviceInfo, audioFormat);
     audioInput->setBufferSize(AUDIO_BUFFER_INPUT);
 
+    buffer = new QQueue<char>();
+
     audioIODevice = audioInput->start();
     connect(audioIODevice, &QIODevice::readyRead, this, &Source::readAudioBytes);
 }
@@ -77,6 +87,8 @@ void Source::stop() {
     audioInput->stop();
 
     audioInput->deleteLater();
+
+    delete buffer;
 }
 
 void Source::readAudioBytes() {
@@ -90,5 +102,25 @@ void Source::readAudioBytes() {
     auto bytesRead = (qint32) length;
     bytes += bytesRead;
 
-    QMetaObject::invokeMethod(this, "newFrame", Qt::QueuedConnection, Q_ARG(const QByteArray, rawData));
+    for (char c: rawData)
+        buffer->append(c);
+
+    int bytesToRead = audioFormat.bytesForFrames(frameSize);
+
+    while (buffer->size() >= bytesToRead) {
+        QByteArray frameData;
+        for (int i = 0; i < bytesToRead; i++)
+            frameData.append(buffer->dequeue());
+
+        const QList<qreal> &values = dsp::Utility::bytesToValues(frameData, audioFormat);
+
+        model::Frame frame(values);
+
+        QMetaObject::invokeMethod(
+                this,
+                "newFrame",
+                Qt::QueuedConnection,
+                Q_ARG(const audioreceiver::model::Frame, frame)
+        );
+    }
 }

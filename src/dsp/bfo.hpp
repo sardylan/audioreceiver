@@ -19,16 +19,13 @@
 #ifndef __AUDIORECEVIER__DSP__BFO_H
 #define __AUDIORECEVIER__DSP__BFO_H
 
+#include <QtCore/QtGlobal>
 #include <QtCore/QObject>
 #include <QtCore/QList>
 
-#include "../utilities/service.hpp"
-
-using namespace audioreceiver;
-
 namespace audioreceiver::dsp {
 
-    class BFO : public utilities::Service {
+    class BFO : public QObject {
     Q_OBJECT
 
     public:
@@ -49,13 +46,9 @@ namespace audioreceiver::dsp {
 
         void setFrequency(unsigned int value);
 
-        void start() override;
-
-        void stop() override;
-
     public slots:
 
-        void execute(const QList<qreal> &values);
+        QList<qreal> compute(const QList<qreal> &values);
 
     private:
 
@@ -67,10 +60,6 @@ namespace audioreceiver::dsp {
         bool enabled;
 
         QList<qreal> generateSine(int len);
-
-    signals:
-
-        void newValues(const QList<qreal> &values);
 
     };
 

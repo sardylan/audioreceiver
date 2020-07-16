@@ -33,15 +33,11 @@ extern "C" {
 
 #include <QtCore/QObject>
 #include <QtCore/QList>
-#include <QtCore/QSemaphore>
-
-#include "../utilities/service.hpp"
-
-using namespace audioreceiver;
+#include <QtCore/QMutex>
 
 namespace audioreceiver::dsp {
 
-    class FFT : public utilities::Service {
+    class FFT : public QObject {
     Q_OBJECT
 
     public:
@@ -52,7 +48,7 @@ namespace audioreceiver::dsp {
 
     public slots:
 
-        void execute(const QList<qreal> &data);
+        QList<qreal> compute(const QList<qreal> &data);
 
     private:
 
@@ -63,11 +59,7 @@ namespace audioreceiver::dsp {
 
         fftw_plan plan;
 
-        QSemaphore fftLock;
-
-    signals:
-
-        void newValues(const QList<qreal> &data);
+        QMutex fftLock;
 
     };
 

@@ -20,6 +20,8 @@
 
 #include "destination.hpp"
 
+#include "../dsp/utility.hpp"
+
 using namespace audioreceiver::audio;
 
 Destination::Destination(QObject *parent) : Service(parent) {
@@ -79,9 +81,11 @@ void Destination::stop() {
     audioOutput->deleteLater();
 }
 
-void Destination::newFrame(const QByteArray &data) {
+void Destination::newValues(const QList<qreal> &values) {
     if (audioIODevice == nullptr)
         return;
+
+    QByteArray data = dsp::Utility::valuesToBytes(values, audioFormat);
 
     frames++;
 
@@ -89,6 +93,7 @@ void Destination::newFrame(const QByteArray &data) {
     bytes += dataLength;
 
     qint64 writtenBytes = audioIODevice->write(data);
+
     if (writtenBytes != dataLength)
         qWarning() << "Unable to write all data to audio device"
                    << "-"
