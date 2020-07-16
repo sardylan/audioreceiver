@@ -48,7 +48,7 @@ namespace audioreceiver::dsp {
 
     public slots:
 
-        QList<qreal> compute(const QList<qreal> &data);
+        Q_INVOKABLE QList<qreal> compute(const QList<qreal> &data);
 
     private:
 

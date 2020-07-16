@@ -26,6 +26,7 @@
 
 #include "dsp/bfo.hpp"
 #include "dsp/fft.hpp"
+#include "dsp/fir.hpp"
 
 #include "model/frame.hpp"
 
@@ -69,6 +70,7 @@ namespace audioreceiver {
 
         dsp::BFO *bfo;
         dsp::FFT *fft;
+        dsp::FIR *fir;
 
     private slots:
 

@@ -16,29 +16,54 @@
  *
  */
 
+#include <QtCore/QDebug>
+#include <QtCore/QVector>
+#include <utility>
+
 #include "fir.hpp"
-#include "utility.hpp"
 
 using namespace audioreceiver::dsp;
 
-FIR::FIR(const QList<qreal> &kernel, QObject *parent) : QObject(parent), kernel(kernel) {
-
+FIR::FIR(QList<qreal> kernel, QObject *parent) : QObject(parent), kernel(qMove(kernel)) {
+    enabled = false;
 }
 
 FIR::~FIR() = default;
 
-QList<qreal> FIR::compute(const QList<qreal> &input) {
-    int len = input.length() + (kernel.length() - 1);
+bool FIR::isEnabled() const {
+    return enabled;
+}
 
-    QList<qreal> output;
-    output.reserve(len);
+void FIR::setEnabled(bool value) {
+    FIR::enabled = value;
+}
+
+QList<qreal> FIR::compute(const QList<qreal> &input) {
+    if (input.isEmpty() || !enabled || kernel.isEmpty())
+        return input;
+
+    int len = input.length() + (kernel.length() - 1);
+    if (len <= 0)
+        return input;
+
+    qDebug() << "FIR start";
+
+    QVector<qreal> output;
+    output.resize(len);
 
     for (int i = 0; i < input.length(); i++) {
         auto &inputSample = const_cast<qreal &>(input[i]);
 
-        for (int j = 0; j < kernel.length(); j++)
-            output[i + j] = output[i + j] + (inputSample * kernel[j]);
+        for (int j = 0; j < kernel.length(); j++) {
+            int pos = i + j;
+            qreal &oldValue = output[pos];
+            qreal &kernelValue = kernel[j];
+            qreal newValue = oldValue + (inputSample * kernelValue);
+            output[pos] = newValue;
+        }
     }
 
-    return output;
+    qDebug() << "FIR end";
+
+    return output.toList();
 }

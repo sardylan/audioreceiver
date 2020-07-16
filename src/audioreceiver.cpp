@@ -107,6 +107,7 @@ AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
 
     bfo = nullptr;
     fft = nullptr;
+    fir = nullptr;
 
     connect(audioSource, &audio::Source::newFrame, this, &AudioReceiver::newFrame);
 }
@@ -140,9 +141,13 @@ void AudioReceiver::start() {
 
     bfo = new dsp::BFO(audioFormat.sampleRate(), this);
     bfo->setEnabled(true);
-    bfo->setFrequency(16500);
+    bfo->setFrequency(1);
 
     fft = new dsp::FFT(AUDIORECEIVER_FRAME_SIZE);
+
+    QList<qreal> kernel;
+    fir = new dsp::FIR(kernel);
+    fir->setEnabled(true);
 
     QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
@@ -157,17 +162,22 @@ void AudioReceiver::stop() {
     QMetaObject::invokeMethod(audioSource, &audio::Source::stop, Qt::QueuedConnection);
 
     bfo->deleteLater();
+    fft->deleteLater();
+    fir->deleteLater();
 
     QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
 }
 
 void AudioReceiver::newFrame(const model::Frame &frame) {
-    QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rms, frame.getValues());
-    QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, frame.getValues());
     QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::compute, frame.getValues());
+    QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, frame.getValues());
+    QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rms, frame.getValues());
+
+    QList<qreal> ifValues = bfoFuture.result();
+    QFuture<QList<qreal>> firFuture = QtConcurrent::run(fir, &dsp::FIR::compute, ifValues);
 
     qreal rms = rmsFuture.result();
-    QList<qreal> newValues = bfoFuture.result();
+    QList<qreal> newValues = firFuture.result();
     QList<qreal> fftValues = fftFuture.result();
 
     QMetaObject::invokeMethod(

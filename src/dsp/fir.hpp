@@ -20,6 +20,7 @@
 #define __AUDIORECEVIER__DSP__FIR_H
 
 #include <QtCore/QObject>
+#include <QtCore/QList>
 
 namespace audioreceiver::dsp {
 
@@ -28,17 +29,22 @@ namespace audioreceiver::dsp {
 
     public:
 
-        explicit FIR(const QList<qreal> &kernel, QObject *parent = nullptr);
+        explicit FIR(QList<qreal> kernel, QObject *parent = nullptr);
 
         ~FIR() override;
 
+        [[nodiscard]] bool isEnabled() const;
+
+        void setEnabled(bool value);
+
     public slots:
 
-        QList<qreal> compute(const QList<qreal> &input);
+        Q_INVOKABLE QList<qreal> compute(const QList<qreal> &input);
 
     private:
 
-        const QList<qreal> &kernel;
+        QList<qreal> kernel;
+        bool enabled;
 
     };
 
