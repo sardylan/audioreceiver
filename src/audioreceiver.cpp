@@ -102,6 +102,8 @@ int main(int argc, char **argv) {
 }
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
+    config = new Config(this);
+
     audioSource = new audio::Source(AUDIORECEIVER_FRAME_SIZE);
     audioDestination = new audio::Destination();
 
@@ -113,6 +115,8 @@ AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
 }
 
 AudioReceiver::~AudioReceiver() {
+    delete config;
+
     delete audioSource;
     delete audioDestination;
 
@@ -123,23 +127,13 @@ AudioReceiver::~AudioReceiver() {
 void AudioReceiver::start() {
     qInfo() << "Starting Audio Receiver";
 
-    QAudioFormat requestedAudioFormat;
-    requestedAudioFormat.setChannelCount(1);
-    requestedAudioFormat.setSampleRate(48000);
-    requestedAudioFormat.setSampleSize(16);
-    requestedAudioFormat.setSampleType(QAudioFormat::SignedInt);
-    requestedAudioFormat.setByteOrder(QAudioFormat::BigEndian);
-    requestedAudioFormat.setCodec("audio/pcm");
+    config->load();
+    config->save();
 
-    audioSource->setDeviceInfo(QAudioDeviceInfo::defaultInputDevice());
-    audioSource->setAudioFormat(requestedAudioFormat);
+    QAudioFormat inputAudioFormat = prepareInputAudio();
+    QAudioFormat outputAudioFormat = prepareOutputAudio();
 
-    QAudioFormat audioFormat = audioSource->getAudioFormat();
-
-    audioDestination->setDeviceInfo(QAudioDeviceInfo::defaultOutputDevice());
-    audioDestination->setAudioFormat(audioFormat);
-
-    bfo = new dsp::BFO(audioFormat.sampleRate(), this);
+    bfo = new dsp::BFO(inputAudioFormat.sampleRate(), this);
     bfo->setEnabled(true);
     bfo->setFrequency(1);
 
@@ -153,6 +147,48 @@ void AudioReceiver::start() {
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
 
     QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
+}
+
+QAudioFormat AudioReceiver::prepareInputAudio() const {
+    QAudioDeviceInfo inputAudioDeviceInfo = QAudioDeviceInfo::defaultInputDevice();
+
+    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
+        if (audioDeviceInfo.deviceName() == config->getAudioInputDevice())
+            inputAudioDeviceInfo = audioDeviceInfo;
+
+    QAudioFormat requestedAudioFormat;
+    requestedAudioFormat.setChannelCount(config->getAudioInputChannels());
+    requestedAudioFormat.setSampleRate(config->getAudioInputSampleRate());
+    requestedAudioFormat.setSampleSize(config->getAudioInputSampleSize());
+    requestedAudioFormat.setSampleType(config->getAudioInputSampleType());
+    requestedAudioFormat.setByteOrder(config->getAudioInputEndian());
+    requestedAudioFormat.setCodec("audio/pcm");
+
+    audioSource->setDeviceInfo(inputAudioDeviceInfo);
+    audioSource->setAudioFormat(requestedAudioFormat);
+
+    return audioSource->getAudioFormat();
+}
+
+QAudioFormat AudioReceiver::prepareOutputAudio() const {
+    QAudioDeviceInfo outputAudioDeviceInfo = QAudioDeviceInfo::defaultOutputDevice();
+
+    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+        if (audioDeviceInfo.deviceName() == config->getAudioOutputDevice())
+            outputAudioDeviceInfo = audioDeviceInfo;
+
+    QAudioFormat requestedAudioFormat;
+    requestedAudioFormat.setChannelCount(config->getAudioOutputChannels());
+    requestedAudioFormat.setSampleRate(config->getAudioOutputSampleRate());
+    requestedAudioFormat.setSampleSize(config->getAudioOutputSampleSize());
+    requestedAudioFormat.setSampleType(config->getAudioOutputSampleType());
+    requestedAudioFormat.setByteOrder(config->getAudioOutputEndian());
+    requestedAudioFormat.setCodec("audio/pcm");
+
+    audioDestination->setDeviceInfo(outputAudioDeviceInfo);
+    audioDestination->setAudioFormat(requestedAudioFormat);
+
+    return audioDestination->getAudioFormat();
 }
 
 void AudioReceiver::stop() {

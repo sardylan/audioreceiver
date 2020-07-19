@@ -19,17 +19,6 @@
 #ifndef __AUDIORECEVIER__AUDIORECEIVER_H
 #define __AUDIORECEVIER__AUDIORECEIVER_H
 
-#include <QtCore/QObject>
-
-#include "audio/source.hpp"
-#include "audio/destination.hpp"
-
-#include "dsp/bfo.hpp"
-#include "dsp/fft.hpp"
-#include "dsp/fir.hpp"
-
-#include "model/frame.hpp"
-
 #ifdef Q_OS_LINUX
 
 #include <csignal>
@@ -45,6 +34,19 @@ void signalHandler(int signal);
 BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 
 #endif
+
+#include <QtCore/QObject>
+
+#include "config.hpp"
+
+#include "audio/source.hpp"
+#include "audio/destination.hpp"
+
+#include "dsp/bfo.hpp"
+#include "dsp/fft.hpp"
+#include "dsp/fir.hpp"
+
+#include "model/frame.hpp"
 
 #define AUDIORECEIVER_FRAME_SIZE 1024
 
@@ -65,12 +67,18 @@ namespace audioreceiver {
 
     private:
 
+        Config *config;
+
         audio::Source *audioSource;
         audio::Destination *audioDestination;
 
         dsp::BFO *bfo;
         dsp::FFT *fft;
         dsp::FIR *fir;
+
+        [[nodiscard]] QAudioFormat prepareInputAudio() const;
+
+        [[nodiscard]] QAudioFormat prepareOutputAudio() const;
 
     private slots:
 

@@ -7,7 +7,9 @@ find_package(Qt5 REQUIRED
         COMPONENTS Core Concurrent)
 
 add_executable(audiorecevier
-        audioreceiver.cpp audioreceiver.hpp)
+        audioreceiver.cpp audioreceiver.hpp
+        config.cpp config.hpp
+        default.hpp)
 
 target_link_libraries(audiorecevier
         Qt5::Core
