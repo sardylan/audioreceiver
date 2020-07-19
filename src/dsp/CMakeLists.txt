@@ -1,8 +1,8 @@
 find_package(Qt5 REQUIRED
         COMPONENTS Core)
 
-find_package(FFTW REQUIRED
-        COMPONENTS DOUBLE_LIB DOUBLE_THREADS_LIB)
+find_package(FFTW3 REQUIRED
+        COMPONENTS fftw3)
 
 add_library(dsp
         bfo.cpp bfo.hpp
@@ -12,8 +12,7 @@ add_library(dsp
 
 target_link_libraries(dsp
         Qt5::Core
-        FFTW::Double
-        FFTW::DoubleThreads)
+        FFTW3::fftw3)
 
 target_compile_options(dsp
         PRIVATE
