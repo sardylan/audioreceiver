@@ -2,6 +2,8 @@ add_subdirectory(utilities)
 add_subdirectory(model)
 add_subdirectory(dsp)
 add_subdirectory(audio)
+add_subdirectory(widgets)
+add_subdirectory(windows)
 
 find_package(Qt5 REQUIRED
         COMPONENTS Core Concurrent)
@@ -17,7 +19,8 @@ target_link_libraries(audiorecevier
         utilities
         model
         dsp
-        audio)
+        audio
+        windows)
 
 target_compile_options(audiorecevier
         PRIVATE

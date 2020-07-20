@@ -21,6 +21,7 @@
 #include <QtCore/QList>
 #include <QtCore/QFuture>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QtWidgets/QApplication>
 
 #include "audioreceiver.hpp"
 
@@ -81,10 +82,10 @@ int main(int argc, char **argv) {
 
     qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
 
-    QCoreApplication coreApplication(argc, argv);
+    QApplication application(argc, argv);
 
     audioReceiver = new AudioReceiver();
-    QCoreApplication::connect(audioReceiver, &AudioReceiver::finished, []() { QCoreApplication::exit(); });
+    QApplication::connect(audioReceiver, &AudioReceiver::finished, []() { QCoreApplication::exit(); });
 
     audioReceiver->start();
 
@@ -98,7 +99,7 @@ int main(int argc, char **argv) {
         qWarning() << "Unable to set Control Handler";
 #endif
 
-    return QCoreApplication::exec();
+    return QApplication::exec();
 }
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
@@ -111,6 +112,8 @@ AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
     fft = nullptr;
     fir = nullptr;
 
+    mainWindow = new windows::Main();
+
     connect(audioSource, &audio::Source::newFrame, this, &AudioReceiver::newFrame);
 }
 
@@ -122,6 +125,8 @@ AudioReceiver::~AudioReceiver() {
 
     delete bfo;
     delete fft;
+
+    delete mainWindow;
 };
 
 void AudioReceiver::start() {
@@ -147,6 +152,8 @@ void AudioReceiver::start() {
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
 
     QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
+
+    mainWindow->show();
 }
 
 QAudioFormat AudioReceiver::prepareInputAudio() const {
@@ -213,6 +220,8 @@ void AudioReceiver::newFrame(const model::Frame &frame) {
     QFuture<QList<qreal>> firFuture = QtConcurrent::run(fir, &dsp::FIR::compute, ifValues);
 
     qreal rms = rmsFuture.result();
+    QMetaObject::invokeMethod(mainWindow, "updateVuMeter", Qt::QueuedConnection, Q_ARG(qreal, rms));
+
     QList<qreal> newValues = firFuture.result();
     QList<qreal> fftValues = fftFuture.result();
 

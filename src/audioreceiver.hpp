@@ -76,6 +76,8 @@ namespace audioreceiver {
         dsp::FFT *fft;
         dsp::FIR *fir;
 
+        windows::Main *mainWindow;
+
         [[nodiscard]] QAudioFormat prepareInputAudio() const;
 
         [[nodiscard]] QAudioFormat prepareOutputAudio() const;
