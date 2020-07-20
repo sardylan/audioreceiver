@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__UTILITIES__SERVICE_H
-#define __AUDIORECEVIER__UTILITIES__SERVICE_H
+#ifndef __AUDIORECEIVER__UTILITIES__SERVICE_H
+#define __AUDIORECEIVER__UTILITIES__SERVICE_H
 
 #include <QtCore/QObject>
 #include <QtCore/QThread>

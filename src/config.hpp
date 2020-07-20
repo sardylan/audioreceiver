@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__CONFIG_H
-#define __AUDIORECEVIER__CONFIG_H
+#ifndef __AUDIORECEIVER__CONFIG_H
+#define __AUDIORECEIVER__CONFIG_H
 
 #include <QtCore/QObject>
 #include <QtCore/QString>

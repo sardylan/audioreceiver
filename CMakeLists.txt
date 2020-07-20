@@ -11,4 +11,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+set (APPLICATION_NAME "Audio Receiver")
+set (APPLICATION_VERSION "0.0.0")
+
+set (ORGANIZATION_NAME "The HellNet.org")
+set (ORGANIZATION_DOMAIN "thehellnet.org")
+
 add_subdirectory(src)

@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__FFT_H
-#define __AUDIORECEVIER__DSP__FFT_H
+#ifndef __AUDIORECEIVER__DSP__FFT_H
+#define __AUDIORECEIVER__DSP__FFT_H
 
 #include <complex>
 

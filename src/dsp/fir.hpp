@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__FIR_H
-#define __AUDIORECEVIER__DSP__FIR_H
+#ifndef __AUDIORECEIVER__DSP__FIR_H
+#define __AUDIORECEIVER__DSP__FIR_H
 
 #include <QtCore/QObject>
 #include <QtCore/QList>

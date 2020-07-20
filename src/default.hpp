@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DEFAULT_H
-#define __AUDIORECEVIER__DEFAULT_H
+#ifndef __AUDIORECEIVER__DEFAULT_H
+#define __AUDIORECEIVER__DEFAULT_H
 
 #include <QtMultimedia/QAudioFormat>
 

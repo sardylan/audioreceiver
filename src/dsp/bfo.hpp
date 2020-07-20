@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__DSP__BFO_H
-#define __AUDIORECEVIER__DSP__BFO_H
+#ifndef __AUDIORECEIVER__DSP__BFO_H
+#define __AUDIORECEIVER__DSP__BFO_H
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QObject>

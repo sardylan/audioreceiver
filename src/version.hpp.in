@@ -16,28 +16,13 @@
  *
  */
 
-#ifndef __AUDIORECEIVER__DSP__UTILITY_H
-#define __AUDIORECEIVER__DSP__UTILITY_H
+#ifndef __AUDIORECEIVER__VERSION_H
+#define __AUDIORECEIVER__VERSION_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#cmakedefine APPLICATION_NAME "@APPLICATION_NAME@"
+#cmakedefine APPLICATION_VERSION "@APPLICATION_VERSION@"
 
-#include <QtMultimedia/QAudioFormat>
-
-namespace audioreceiver::dsp {
-
-    class Utility {
-
-    public:
-
-        static QList<qreal> bytesToValues(const QByteArray &data, const QAudioFormat &audioFormat);
-
-        static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
-
-        static qreal rms(const QList<qreal> &data);
-
-    };
-
-}
+#cmakedefine ORGANIZATION_NAME "@ORGANIZATION_NAME@"
+#cmakedefine ORGANIZATION_DOMAIN "@ORGANIZATION_DOMAIN@"
 
 #endif

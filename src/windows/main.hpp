@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__WINDOWS__MAIN_H
-#define __AUDIORECEVIER__WINDOWS__MAIN_H
+#ifndef __AUDIORECEIVER__WINDOWS__MAIN_H
+#define __AUDIORECEIVER__WINDOWS__MAIN_H
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QtDebug>

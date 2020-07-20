@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__AUDIO__OUTPUT_H
-#define __AUDIORECEVIER__AUDIO__OUTPUT_H
+#ifndef __AUDIORECEIVER__AUDIO__OUTPUT_H
+#define __AUDIORECEIVER__AUDIO__OUTPUT_H
 
 #include <QtCore/QObject>
 #include <QtCore/QIODevice>

@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__MODEL__FRAME_H
-#define __AUDIORECEVIER__MODEL__FRAME_H
+#ifndef __AUDIORECEIVER__MODEL__FRAME_H
+#define __AUDIORECEIVER__MODEL__FRAME_H
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QtDebug>

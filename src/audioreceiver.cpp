@@ -16,6 +16,9 @@
  *
  */
 
+#include <csignal>
+
+#include <QtCore/QtGlobal>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
 #include <QtCore/QList>
@@ -24,6 +27,7 @@
 #include <QtWidgets/QApplication>
 
 #include "audioreceiver.hpp"
+#include "version.hpp"
 
 #include "dsp/utility.hpp"
 
@@ -81,6 +85,11 @@ int main(int argc, char **argv) {
                        "%{message}");
 
     qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
+
+    QCoreApplication::setApplicationName(APPLICATION_NAME);
+    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
+    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
+    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
 
     QApplication application(argc, argv);
 
