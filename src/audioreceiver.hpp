@@ -38,6 +38,8 @@ BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 #include <QtCore/QObject>
 
 #include "config.hpp"
+#include "status.hpp"
+#include "worker.hpp"
 
 #include "audio/source.hpp"
 #include "audio/destination.hpp"
@@ -47,10 +49,9 @@ BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 #include "dsp/fir.hpp"
 
 #include "windows/main.hpp"
+#include "windows/config.hpp"
 
 #include "model/frame.hpp"
-
-#define AUDIORECEIVER_FRAME_SIZE 1024
 
 namespace audioreceiver {
 
@@ -70,23 +71,18 @@ namespace audioreceiver {
     private:
 
         Config *config;
+        Status *status;
 
-        audio::Source *audioSource;
-        audio::Destination *audioDestination;
-
-        dsp::BFO *bfo;
-        dsp::FFT *fft;
-        dsp::FIR *fir;
+        Worker *worker;
 
         windows::Main *mainWindow;
+        windows::Config *configWindow;
 
-        [[nodiscard]] QAudioFormat prepareInputAudio() const;
-
-        [[nodiscard]] QAudioFormat prepareOutputAudio() const;
+        void signalConnect();
 
     private slots:
 
-        void newFrame(const model::Frame &frame);
+        void openConfigWindow();
 
     signals:
 

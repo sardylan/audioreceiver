@@ -10,3 +10,6 @@ target_link_libraries(model
 target_compile_options(model
         PRIVATE
         -Wall)
+
+target_include_directories(model
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

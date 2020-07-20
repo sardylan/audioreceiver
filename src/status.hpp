@@ -16,50 +16,39 @@
  *
  */
 
-#ifndef __AUDIORECEIVER__WINDOWS__MAIN_H
-#define __AUDIORECEIVER__WINDOWS__MAIN_H
+#ifndef __AUDIORECEIVER__STATUS_H
+#define __AUDIORECEIVER__STATUS_H
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QtDebug>
-#include <QtCore/QList>
-#include <QtCore/QDateTime>
+#include <QtCore/QObject>
 
-#include <QtWidgets/QMainWindow>
+namespace audioreceiver {
 
-#include "../widgets/vumeter.hpp"
-
-namespace Ui {
-    class Main;
-}
-
-namespace audioreceiver::windows {
-
-    class Main : public QMainWindow {
+    class Status : public QObject {
     Q_OBJECT
 
     public:
 
-        explicit Main(QWidget *parent = nullptr);
+        static Status *getInstance();
 
-        ~Main() override;
-
-    public slots:
-
-        void updateVuMeter(const qreal &value);
+        [[nodiscard]] bool isRunning() const;
 
     private:
 
-        Ui::Main *ui;
+        explicit Status(QObject *parent = nullptr);
 
-        widgets::VUMeter *vuMeter;
+        ~Status() override;
 
-        void signalConnect();
+        static Status *instance;
 
-        void initUi();
+        bool running;
+
+    public slots:
+
+        void setRunning(bool newValue);
 
     signals:
 
-        void openConfigWindow();
+        void updateRunning(bool value);
 
     };
 

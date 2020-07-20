@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(audiorecevier)
+project(audioreceiver)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -16,5 +16,7 @@ set (APPLICATION_VERSION "0.0.0")
 
 set (ORGANIZATION_NAME "The HellNet.org")
 set (ORGANIZATION_DOMAIN "thehellnet.org")
+
+enable_testing()
 
 add_subdirectory(src)

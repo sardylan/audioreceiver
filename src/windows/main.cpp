@@ -45,5 +45,5 @@ void Main::updateVuMeter(const qreal &value) {
 }
 
 void Main::signalConnect() {
-
+    connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow);
 }

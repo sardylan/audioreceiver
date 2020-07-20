@@ -20,15 +20,28 @@
 
 using namespace audioreceiver::model;
 
-Frame::Frame() = default;
+Frame::Frame() : number(0),
+                 dateTime(QDateTime::currentDateTimeUtc()),
+                 values() {
+
+}
+
+Frame::Frame(const quint64 number, QList<qreal> values, QDateTime dateTime) :
+        number(number),
+        dateTime(qMove(dateTime)),
+        values(qMove(values)) {
+
+}
+
+Frame::Frame(Frame &other) = default;
+
+Frame::Frame(const Frame &other) = default;
 
 Frame::~Frame() = default;
 
-Frame::Frame(const Frame &frame) = default;
-
-Frame::Frame(QList<qreal> values, QDateTime dateTime) :
-        dateTime(qMove(dateTime)),
-        values(qMove(values)) {}
+quint64 Frame::getNumber() const {
+    return number;
+}
 
 const QDateTime &Frame::getDateTime() const {
     return dateTime;

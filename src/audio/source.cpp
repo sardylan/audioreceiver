@@ -25,6 +25,8 @@
 using namespace audioreceiver::audio;
 
 Source::Source(const int &frameSize, QObject *parent) : Service(parent), frameSize(frameSize) {
+    frameNumber = 0;
+
     deviceInfo = QAudioDeviceInfo::defaultInputDevice();
 
     audioInput = nullptr;
@@ -114,7 +116,7 @@ void Source::readAudioBytes() {
 
         const QList<qreal> &values = dsp::Utility::bytesToValues(frameData, audioFormat);
 
-        model::Frame frame(values);
+        model::Frame frame = prepareFrame(values);
 
         QMetaObject::invokeMethod(
                 this,
@@ -123,4 +125,9 @@ void Source::readAudioBytes() {
                 Q_ARG(const audioreceiver::model::Frame, frame)
         );
     }
+}
+
+model::Frame Source::prepareFrame(const QList<qreal> &values) {
+    frameNumber++;
+    return model::Frame(frameNumber, values);
 }

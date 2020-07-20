@@ -23,6 +23,15 @@
 
 using namespace audioreceiver;
 
+Config *Config::instance = nullptr;
+
+Config *Config::getInstance() {
+    if (Config::instance == nullptr)
+        Config::instance = new Config();
+
+    return Config::instance;
+}
+
 Config::Config(QObject *parent) : QObject(parent) {
     audioInputDevice = CONFIG_AUDIO_INPUT_DEVICE_DEFAULT;
     audioInputChannels = CONFIG_AUDIO_INPUT_CHANNELS_DEFAULT;

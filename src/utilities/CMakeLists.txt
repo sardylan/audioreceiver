@@ -10,3 +10,6 @@ target_link_libraries(utilities
 target_compile_options(utilities
         PRIVATE
         -Wall)
+
+target_include_directories(utilities
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

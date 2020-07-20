@@ -16,48 +16,29 @@
  *
  */
 
-#ifndef __AUDIORECEIVER__MODEL__FRAME_H
-#define __AUDIORECEIVER__MODEL__FRAME_H
+#ifndef __AUDIORECEIVER__WIDGETS__WATERFALL_H
+#define __AUDIORECEIVER__WIDGETS__WATERFALL_H
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QtDebug>
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
 
-namespace audioreceiver::model {
+#include <QtWidgets/QOpenGLWidget>
 
-    class Frame {
+namespace audioreceiver::widgets {
+
+    class Waterfall : public QOpenGLWidget {
+    Q_OBJECT
 
     public:
 
-        Frame();
+        explicit Waterfall(QWidget *parent = nullptr);
 
-        Frame(const quint64 number, QList<qreal> values, QDateTime dateTime = QDateTime::currentDateTimeUtc());
-
-        Frame(Frame &other);
-
-        Frame(const Frame &other);
-
-        ~Frame();
-
-        [[nodiscard]] quint64 getNumber() const;
-
-        [[nodiscard]] const QDateTime &getDateTime() const;
-
-        [[nodiscard]] const QList<qreal> &getValues() const;
-
-    private:
-
-        const quint64 number{};
-        const QDateTime dateTime;
-        const QList<qreal> values;
+        ~Waterfall() override;
 
     };
 
 }
-
-Q_DECLARE_METATYPE(audioreceiver::model::Frame)
-
-QDebug operator<<(QDebug dbg, const audioreceiver::model::Frame &frame);
 
 #endif

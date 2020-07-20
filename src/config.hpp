@@ -30,9 +30,7 @@ namespace audioreceiver {
 
     public:
 
-        explicit Config(QObject *parent = nullptr);
-
-        ~Config() override;
+        static Config* getInstance();
 
         [[nodiscard]] const QString &getAudioInputDevice() const;
 
@@ -89,6 +87,12 @@ namespace audioreceiver {
         void save() const;
 
     private:
+
+        explicit Config(QObject *parent = nullptr);
+
+        ~Config() override;
+
+        static Config *instance;
 
         QString audioInputDevice;
         int audioInputChannels;

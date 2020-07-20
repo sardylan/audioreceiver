@@ -17,3 +17,6 @@ target_link_libraries(dsp
 target_compile_options(dsp
         PRIVATE
         -Wall)
+
+target_include_directories(dsp
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

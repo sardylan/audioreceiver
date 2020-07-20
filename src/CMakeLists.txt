@@ -11,12 +11,14 @@ find_package(Qt5 REQUIRED
 configure_file(version.hpp.in version.hpp @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(AUDIORECEIVER
+add_executable(audioreceiver
         audioreceiver.cpp audioreceiver.hpp
+        worker.cpp worker.hpp
         config.cpp config.hpp
+        status.cpp status.hpp
         default.hpp)
 
-target_link_libraries(AUDIORECEIVER
+target_link_libraries(audioreceiver
         Qt5::Core
         Qt5::Concurrent
         utilities
@@ -25,6 +27,6 @@ target_link_libraries(AUDIORECEIVER
         audio
         windows)
 
-target_compile_options(AUDIORECEIVER
+target_compile_options(audioreceiver
         PRIVATE
         -Wall)

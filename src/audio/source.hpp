@@ -70,6 +70,8 @@ namespace audioreceiver::audio {
 
         const int frameSize;
 
+        quint64 frameNumber;
+
         QAudioDeviceInfo deviceInfo;
         QAudioFormat audioFormat;
 
@@ -80,6 +82,8 @@ namespace audioreceiver::audio {
         quint64 bytes;
 
         QQueue<char> *buffer;
+
+        model::Frame prepareFrame(const QList<qreal> &values);
 
     private slots:
 

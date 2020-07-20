@@ -69,7 +69,16 @@ BOOL WINAPI ctrlHandler(DWORD fdwCtrlType) {
 
 #endif
 
+#define AUDIORECEIVER_FRAME_SIZE 1024
+
 int main(int argc, char **argv) {
+    qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
+
+    QCoreApplication::setApplicationName(APPLICATION_NAME);
+    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
+    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
+    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
+
     qSetMessagePattern("\x1b[94;1m[\x1b[96;1m%{time yyyy-MM-dd hh:mm:ss.zzz}\x1b[94;1m]\x1b[39;0m "
                        "PID:\x1b[31m%{pid}\x1b[39m "
                        "TID:\x1b[91m%{threadid}\x1b[39m "
@@ -83,13 +92,6 @@ int main(int argc, char **argv) {
                        "%{file}:%{line} "
                        "[\x1b[97m%{function}()\x1b[39m] "
                        "%{message}");
-
-    qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
-
-    QCoreApplication::setApplicationName(APPLICATION_NAME);
-    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
-    QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
-    QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
 
     QApplication application(argc, argv);
 
@@ -112,30 +114,22 @@ int main(int argc, char **argv) {
 }
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
-    config = new Config(this);
+    config = Config::getInstance();
+    status = Status::getInstance();
 
-    audioSource = new audio::Source(AUDIORECEIVER_FRAME_SIZE);
-    audioDestination = new audio::Destination();
-
-    bfo = nullptr;
-    fft = nullptr;
-    fir = nullptr;
+    worker = new Worker();
 
     mainWindow = new windows::Main();
+    configWindow = new windows::Config();
 
-    connect(audioSource, &audio::Source::newFrame, this, &AudioReceiver::newFrame);
+    signalConnect();
 }
 
 AudioReceiver::~AudioReceiver() {
-    delete config;
-
-    delete audioSource;
-    delete audioDestination;
-
-    delete bfo;
-    delete fft;
-
     delete mainWindow;
+    delete configWindow;
+
+    delete worker;
 };
 
 void AudioReceiver::start() {
@@ -144,105 +138,21 @@ void AudioReceiver::start() {
     config->load();
     config->save();
 
-    QAudioFormat inputAudioFormat = prepareInputAudio();
-    QAudioFormat outputAudioFormat = prepareOutputAudio();
-
-    bfo = new dsp::BFO(inputAudioFormat.sampleRate(), this);
-    bfo->setEnabled(true);
-    bfo->setFrequency(1);
-
-    fft = new dsp::FFT(AUDIORECEIVER_FRAME_SIZE);
-
-    QList<qreal> kernel;
-    fir = new dsp::FIR(kernel);
-    fir->setEnabled(true);
-
-    QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
-    QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
-
     QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
 
     mainWindow->show();
 }
 
-QAudioFormat AudioReceiver::prepareInputAudio() const {
-    QAudioDeviceInfo inputAudioDeviceInfo = QAudioDeviceInfo::defaultInputDevice();
-
-    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
-        if (audioDeviceInfo.deviceName() == config->getAudioInputDevice())
-            inputAudioDeviceInfo = audioDeviceInfo;
-
-    QAudioFormat requestedAudioFormat;
-    requestedAudioFormat.setChannelCount(config->getAudioInputChannels());
-    requestedAudioFormat.setSampleRate(config->getAudioInputSampleRate());
-    requestedAudioFormat.setSampleSize(config->getAudioInputSampleSize());
-    requestedAudioFormat.setSampleType(config->getAudioInputSampleType());
-    requestedAudioFormat.setByteOrder(config->getAudioInputEndian());
-    requestedAudioFormat.setCodec("audio/pcm");
-
-    audioSource->setDeviceInfo(inputAudioDeviceInfo);
-    audioSource->setAudioFormat(requestedAudioFormat);
-
-    return audioSource->getAudioFormat();
-}
-
-QAudioFormat AudioReceiver::prepareOutputAudio() const {
-    QAudioDeviceInfo outputAudioDeviceInfo = QAudioDeviceInfo::defaultOutputDevice();
-
-    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
-        if (audioDeviceInfo.deviceName() == config->getAudioOutputDevice())
-            outputAudioDeviceInfo = audioDeviceInfo;
-
-    QAudioFormat requestedAudioFormat;
-    requestedAudioFormat.setChannelCount(config->getAudioOutputChannels());
-    requestedAudioFormat.setSampleRate(config->getAudioOutputSampleRate());
-    requestedAudioFormat.setSampleSize(config->getAudioOutputSampleSize());
-    requestedAudioFormat.setSampleType(config->getAudioOutputSampleType());
-    requestedAudioFormat.setByteOrder(config->getAudioOutputEndian());
-    requestedAudioFormat.setCodec("audio/pcm");
-
-    audioDestination->setDeviceInfo(outputAudioDeviceInfo);
-    audioDestination->setAudioFormat(requestedAudioFormat);
-
-    return audioDestination->getAudioFormat();
-}
-
 void AudioReceiver::stop() {
     qInfo() << "Audio Receiver Stop";
-
-    QMetaObject::invokeMethod(audioDestination, &audio::Destination::stop, Qt::QueuedConnection);
-    QMetaObject::invokeMethod(audioSource, &audio::Source::stop, Qt::QueuedConnection);
-
-    bfo->deleteLater();
-    fft->deleteLater();
-    fir->deleteLater();
 
     QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
 }
 
-void AudioReceiver::newFrame(const model::Frame &frame) {
-    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::compute, frame.getValues());
-    QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, frame.getValues());
-    QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rms, frame.getValues());
+void AudioReceiver::signalConnect() {
+    connect(mainWindow, &windows::Main::openConfigWindow, this, &AudioReceiver::openConfigWindow);
+}
 
-    QList<qreal> ifValues = bfoFuture.result();
-    QFuture<QList<qreal>> firFuture = QtConcurrent::run(fir, &dsp::FIR::compute, ifValues);
-
-    qreal rms = rmsFuture.result();
-    QMetaObject::invokeMethod(mainWindow, "updateVuMeter", Qt::QueuedConnection, Q_ARG(qreal, rms));
-
-    QList<qreal> newValues = firFuture.result();
-    QList<qreal> fftValues = fftFuture.result();
-
-    QMetaObject::invokeMethod(
-            audioDestination,
-            "newValues",
-            Qt::QueuedConnection,
-            Q_ARG(const QList<qreal>, newValues)
-    );
-
-    qDebug()
-            << "Frame:" << frame
-            << "-"
-            << "RMS:" << rms;
+void AudioReceiver::openConfigWindow() {
+    configWindow->exec();
 }

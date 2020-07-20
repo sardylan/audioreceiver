@@ -14,3 +14,6 @@ target_link_libraries(audio
 target_compile_options(audio
         PRIVATE
         -Wall)
+
+target_include_directories(audio
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

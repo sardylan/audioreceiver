@@ -5,7 +5,8 @@ find_package(OpenGL REQUIRED
         COMPONENTS OpenGL)
 
 add_library(widgets
-        vumeter.cpp vumeter.hpp)
+        vumeter.cpp vumeter.hpp
+        waterfall.cpp waterfall.hpp)
 
 target_link_libraries(widgets
         Qt5::Core
@@ -16,3 +17,6 @@ target_link_libraries(widgets
 target_compile_options(widgets
         PRIVATE
         -Wall)
+
+target_include_directories(widgets
+        INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})

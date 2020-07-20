@@ -16,53 +16,15 @@
  *
  */
 
-#ifndef __AUDIORECEIVER__WINDOWS__MAIN_H
-#define __AUDIORECEIVER__WINDOWS__MAIN_H
+#include "QtCore/QDebug"
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QtDebug>
-#include <QtCore/QList>
-#include <QtCore/QDateTime>
+#include "waterfall.hpp"
 
-#include <QtWidgets/QMainWindow>
+using namespace audioreceiver::widgets;
 
-#include "../widgets/vumeter.hpp"
-
-namespace Ui {
-    class Main;
-}
-
-namespace audioreceiver::windows {
-
-    class Main : public QMainWindow {
-    Q_OBJECT
-
-    public:
-
-        explicit Main(QWidget *parent = nullptr);
-
-        ~Main() override;
-
-    public slots:
-
-        void updateVuMeter(const qreal &value);
-
-    private:
-
-        Ui::Main *ui;
-
-        widgets::VUMeter *vuMeter;
-
-        void signalConnect();
-
-        void initUi();
-
-    signals:
-
-        void openConfigWindow();
-
-    };
+Waterfall::Waterfall(QWidget *parent) {
 
 }
 
-#endif
+Waterfall::~Waterfall() = default;
+

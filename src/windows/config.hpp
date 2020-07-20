@@ -16,50 +16,60 @@
  *
  */
 
-#ifndef __AUDIORECEIVER__WINDOWS__MAIN_H
-#define __AUDIORECEIVER__WINDOWS__MAIN_H
+#ifndef __AUDIORECEIVER__WINDOWS__CONFIG_H
+#define __AUDIORECEIVER__WINDOWS__CONFIG_H
 
-#include <QtCore/QtGlobal>
-#include <QtCore/QtDebug>
-#include <QtCore/QList>
-#include <QtCore/QDateTime>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QDialog>
 
-#include <QtWidgets/QMainWindow>
-
-#include "../widgets/vumeter.hpp"
+#include "../config.hpp"
+#include "../status.hpp"
 
 namespace Ui {
-    class Main;
+    class Config;
 }
 
 namespace audioreceiver::windows {
 
-    class Main : public QMainWindow {
+    class Config : public QDialog {
     Q_OBJECT
 
     public:
 
-        explicit Main(QWidget *parent = nullptr);
+        explicit Config(QWidget *parent = nullptr);
 
-        ~Main() override;
-
-    public slots:
-
-        void updateVuMeter(const qreal &value);
+        ~Config() override;
 
     private:
 
-        Ui::Main *ui;
+        audioreceiver::Config *config;
+        audioreceiver::Status *status;
 
-        widgets::VUMeter *vuMeter;
+        Ui::Config *ui;
 
         void signalConnect();
 
         void initUi();
 
-    signals:
+        void load();
 
-        void openConfigWindow();
+        void save();
+
+        void checkStatus();
+
+    private slots:
+
+        void handleOK();
+
+        void handleApply();
+
+        void handleClose();
+
+        void handleReset();
+
+        void updateInputDeviceOptions();
+
+        void updateOutputDeviceOptions();
 
     };
 

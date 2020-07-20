@@ -1,40 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
     <class>Main</class>
-    <widget class="QMainWindow" name="main">
+    <widget class="QMainWindow" name="mainWindow">
         <property name="geometry">
             <rect>
                 <x>0</x>
                 <y>0</y>
                 <width>640</width>
-                <height>480</height>
+                <height>360</height>
             </rect>
         </property>
         <property name="windowTitle">
-            <string>Audio Receiver</string>
+            <string>AudioVisual</string>
         </property>
-        <widget class="QWidget" name="mainWidget">
-            <layout class="QGridLayout" name="mainLayout">
+        <widget class="QWidget" name="centralwidget">
+            <layout class="QGridLayout" name="gridLayout" rowstretch="0">
                 <item row="0" column="0">
-                    <widget class="QGroupBox" name="mainGroupBox">
+                    <widget class="QGroupBox" name="groupBox">
                         <property name="title">
-                            <string>Signal</string>
+                            <string>Signals</string>
                         </property>
-                        <layout class="QGridLayout" name="gridLayout" rowstretch="0,1">
+                        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,1,0" columnstretch="0,0,1,0">
                             <item row="0" column="0">
-                                <widget class="QStackedWidget" name="vuMeterStackedWidget">
-                                    <property name="minimumSize">
-                                        <size>
-                                            <width>0</width>
-                                            <height>20</height>
-                                        </size>
+                                <widget class="QLabel" name="gainLabel">
+                                    <property name="text">
+                                        <string>Gain</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="0" column="1" colspan="2">
+                                <widget class="QSlider" name="gainSlider">
+                                    <property name="orientation">
+                                        <enum>Qt::Horizontal</enum>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="0" column="3">
+                                <widget class="QLabel" name="gainValue">
+                                    <property name="text">
+                                        <string>TextLabel</string>
                                     </property>
                                 </widget>
                             </item>
                             <item row="1" column="0">
-                                <widget class="QStackedWidget" name="waterfallWidget"/>
+                                <widget class="QLabel" name="vuMeterlabel">
+                                    <property name="text">
+                                        <string>Level</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="1" column="1" colspan="3">
+                                <widget class="QStackedWidget" name="vuMeterStackedWidget"/>
+                            </item>
+                            <item row="2" column="0" colspan="4">
+                                <widget class="QStackedWidget" name="waterfallStackedWidget"/>
+                            </item>
+                            <item row="3" column="0">
+                                <widget class="QCheckBox" name="bfoCheckBox">
+                                    <property name="text">
+                                        <string>Enable BFO</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="3" column="1">
+                                <widget class="QLineEdit" name="bfoFrequenctValue">
+                                    <property name="text">
+                                        <string>Frequency</string>
+                                    </property>
+                                </widget>
                             </item>
                         </layout>
+                        <zorder>bfoCheckBox</zorder>
+                        <zorder>waterfallStackedWidget</zorder>
+                        <zorder>vuMeterlabel</zorder>
+                        <zorder>vuMeterStackedWidget</zorder>
+                        <zorder>gainLabel</zorder>
+                        <zorder>gainSlider</zorder>
+                        <zorder>gainValue</zorder>
+                        <zorder>bfoFrequenctValue</zorder>
                     </widget>
                 </item>
             </layout>
@@ -48,8 +91,59 @@
                     <height>29</height>
                 </rect>
             </property>
+            <widget class="QMenu" name="menu_File">
+                <property name="title">
+                    <string>&amp;File</string>
+                </property>
+                <addaction name="actionRun"/>
+                <addaction name="actionConfig"/>
+                <addaction name="separator"/>
+                <addaction name="actionExit"/>
+            </widget>
+            <addaction name="menu_File"/>
         </widget>
-        <widget class="QStatusBar" name="statusBar"/>
+        <widget class="QStatusBar" name="statusbar"/>
+        <widget class="QToolBar" name="toolBar">
+            <property name="windowTitle">
+                <string>toolBar</string>
+            </property>
+            <property name="movable">
+                <bool>false</bool>
+            </property>
+            <property name="allowedAreas">
+                <set>Qt::TopToolBarArea</set>
+            </property>
+            <property name="floatable">
+                <bool>false</bool>
+            </property>
+            <attribute name="toolBarArea">
+                <enum>TopToolBarArea</enum>
+            </attribute>
+            <attribute name="toolBarBreak">
+                <bool>false</bool>
+            </attribute>
+            <addaction name="actionRun"/>
+            <addaction name="actionConfig"/>
+            <addaction name="separator"/>
+        </widget>
+        <action name="actionExit">
+            <property name="text">
+                <string>E&amp;xit</string>
+            </property>
+        </action>
+        <action name="actionConfig">
+            <property name="text">
+                <string>&amp;Config</string>
+            </property>
+        </action>
+        <action name="actionRun">
+            <property name="checkable">
+                <bool>true</bool>
+            </property>
+            <property name="text">
+                <string>&amp;Run</string>
+            </property>
+        </action>
     </widget>
     <resources/>
     <connections/>
