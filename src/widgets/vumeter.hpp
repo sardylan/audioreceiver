@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef __AUDIORECEVIER__WIDGETS__
-#define __AUDIORECEVIER__WINDOWS__MAIN_H
+#ifndef __AUDIORECEVIER__WIDGETS__VUMETER_H
+#define __AUDIORECEVIER__WIDGETS__VUMETER_H
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QtDebug>
