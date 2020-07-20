@@ -46,6 +46,8 @@ BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 #include "dsp/fft.hpp"
 #include "dsp/fir.hpp"
 
+#include "windows/main.hpp"
+
 #include "model/frame.hpp"
 
 #define AUDIORECEIVER_FRAME_SIZE 1024
