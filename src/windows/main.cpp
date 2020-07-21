@@ -30,27 +30,62 @@ Main::Main(audioreceiver::Config *config, audioreceiver::Status *status, QWidget
 
     vuMeter = new widgets::VUMeter(this);
 
+    clockTimer = new QTimer(this);
+
+    statusBarClockLabel = new QLabel(this);
+    statusBarVersionLabel = new QLabel(this);
+
     signalConnect();
     initUi();
+    initStatusBar();
 }
 
 Main::~Main() {
     delete vuMeter;
 
+    delete clockTimer;
+
+    delete statusBarClockLabel;
+    delete statusBarVersionLabel;
+
     delete ui;
-}
-
-void Main::initUi() {
-    setWindowTitle(QString("%1 %2").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()));
-
-    ui->vuMeterStackedWidget->addWidget(vuMeter);
 }
 
 void Main::updateVuMeter(const qreal &value) {
     vuMeter->setValue(value);
 }
 
+void Main::initStatusBar() {
+    statusBarVersionLabel->setFrameShape(QFrame::StyledPanel);
+    statusBarVersionLabel->setAlignment(Qt::AlignRight);
+    statusBarVersionLabel->setMinimumWidth(50);
+    statusBarVersionLabel->setStyleSheet("padding-left: 3px; padding-right: 3px;");
+    statusBarVersionLabel->setText(QString("ver %1").arg(QApplication::applicationVersion()));
+    ui->statusBar->addPermanentWidget(statusBarVersionLabel);
+
+    clockTimer->setInterval(1000);
+    clockTimer->setSingleShot(false);
+    clockTimer->setTimerType(Qt::VeryCoarseTimer);
+    clockTimer->start();
+    statusBarClockLabel->setFrameShape(QFrame::StyledPanel);
+    statusBarClockLabel->setAlignment(Qt::AlignCenter);
+    statusBarClockLabel->setMinimumWidth(50);
+    statusBarClockLabel->setStyleSheet("padding-left: 3px; padding-right: 3px;");
+    ui->statusBar->addPermanentWidget(statusBarClockLabel);
+}
+
 void Main::signalConnect() {
+    connect(clockTimer, &QTimer::timeout, this, &Main::updateClock);
+
     connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow);
     connect(ui->actionExit, &QAction::triggered, this, &Main::close);
+}
+
+void Main::initUi() {
+    setWindowTitle(QString("%1 %2").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()));
+    ui->vuMeterStackedWidget->addWidget(vuMeter);
+}
+
+void Main::updateClock() {
+    statusBarClockLabel->setText(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss (UTC)"));
 }

@@ -23,7 +23,9 @@
 #include <QtCore/QtDebug>
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
+#include <QtCore/QTimer>
 
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 
 #include "../config.hpp"
@@ -57,11 +59,22 @@ namespace audioreceiver::windows {
         audioreceiver::Config *config;
         audioreceiver::Status *status;
 
+        QLabel *statusBarClockLabel;
+        QLabel *statusBarVersionLabel;
+
+        QTimer *clockTimer;
+
         widgets::VUMeter *vuMeter;
+
+        void initStatusBar();
 
         void signalConnect();
 
         void initUi();
+
+    private slots:
+
+        void updateClock();
 
     signals:
 
