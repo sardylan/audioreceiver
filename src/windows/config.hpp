@@ -27,7 +27,6 @@
 #include <QtMultimedia/QAudioDeviceInfo>
 
 #include "../config.hpp"
-#include "../status.hpp"
 
 namespace Ui {
     class Config;
@@ -40,16 +39,23 @@ namespace audioreceiver::windows {
 
     public:
 
-        explicit Config(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent = nullptr);
+        explicit Config(audioreceiver::Config *config, QWidget *parent = nullptr);
 
         ~Config() override;
+
+        [[nodiscard]] bool isLocked() const;
+
+    public slots:
+
+        void setLocked(bool newValue);
 
     private:
 
         Ui::Config *ui;
 
         audioreceiver::Config *config;
-        audioreceiver::Status *status;
+
+        bool locked;
 
         void signalConnect();
 
@@ -67,7 +73,7 @@ namespace audioreceiver::windows {
 
         static void
         updateDeviceComboBox(QComboBox *comboBox,
-                             QString currentValue);
+                             const QString& currentValue);
 
         static void
         updateChannelsComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,

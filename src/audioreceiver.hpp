@@ -38,7 +38,6 @@ BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 #include <QtCore/QObject>
 
 #include "config.hpp"
-#include "status.hpp"
 #include "worker.hpp"
 
 #include "audio/source.hpp"
@@ -71,7 +70,6 @@ namespace audioreceiver {
     private:
 
         Config *config;
-        Status *status;
 
         Worker *worker;
 
@@ -97,6 +95,6 @@ namespace audioreceiver {
 
 }
 
-Q_DECLARE_METATYPE(QList<qreal>);
+Q_DECLARE_METATYPE(QList<qreal>)
 
 #endif

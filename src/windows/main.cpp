@@ -21,12 +21,10 @@
 
 using namespace audioreceiver::windows;
 
-Main::Main(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent) : QMainWindow(parent),
-                                                                                            ui(new Ui::Main) {
+Main::Main(audioreceiver::Config *config, QWidget *parent) : QMainWindow(parent), ui(new Ui::Main) {
     ui->setupUi(this);
 
     Main::config = config;
-    Main::status = status;
 
     vuMeter = new widgets::VUMeter(this);
 
@@ -49,6 +47,23 @@ Main::~Main() {
     delete statusBarVersionLabel;
 
     delete ui;
+}
+
+void Main::updateWorkerStatus(bool value) {
+    ui->gainValue->setEnabled(value);
+    ui->gainSlider->setEnabled(value);
+    ui->gainLabel->setEnabled(value);
+
+    ui->bfoEnableCheckBox->setEnabled(value);
+    ui->bfoFrequencySlider->setEnabled(value);
+    ui->bfoFrequencyValue->setEnabled(value);
+
+    if (!value) {
+        vuMeter->setMax(1);
+        vuMeter->setMin(0);
+        vuMeter->setValue(0);
+        vuMeter->setEnabled(false);
+    }
 }
 
 void Main::updateVuMeter(const qreal &value) {
@@ -75,13 +90,11 @@ void Main::initStatusBar() {
 }
 
 void Main::signalConnect() {
-    connect(status, &Status::updateRunning, this, &Main::updateRunning);
-
     connect(clockTimer, &QTimer::timeout, this, &Main::updateClock);
 
     connect(ui->actionExit, &QAction::triggered, this, &Main::close);
-    connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow);
-    connect(ui->actionRun, &QAction::triggered, this, &Main::handleRunAction);
+    connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow, Qt::QueuedConnection);
+    connect(ui->actionRun, &QAction::triggered, this, &Main::audioWorkerToggle, Qt::QueuedConnection);
 }
 
 void Main::initUi() {
@@ -91,15 +104,4 @@ void Main::initUi() {
 
 void Main::updateClock() {
     statusBarClockLabel->setText(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss (UTC)"));
-}
-
-void Main::handleRunAction() {
-    if (ui->actionRun->isChecked())
-        QMetaObject::invokeMethod(this, &Main::startAudioWorker, Qt::QueuedConnection);
-    else
-        QMetaObject::invokeMethod(this, &Main::stopAudioWorker, Qt::QueuedConnection);
-}
-
-void Main::updateRunning(bool value) {
-    ui->actionRun->setChecked(value);
 }

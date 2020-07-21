@@ -25,12 +25,12 @@
 
 using namespace audioreceiver::windows;
 
-Config::Config(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent) : QDialog(parent),
-                                                                                                ui(new Ui::Config) {
+Config::Config(audioreceiver::Config *config, QWidget *parent) : QDialog(parent), ui(new Ui::Config) {
     ui->setupUi(this);
 
     Config::config = config;
-    Config::status = status;
+
+    locked = false;
 
     signalConnect();
     initUi();
@@ -41,6 +41,14 @@ Config::Config(audioreceiver::Config *config, audioreceiver::Status *status, QWi
 
 Config::~Config() {
     delete ui;
+}
+
+bool Config::isLocked() const {
+    return locked;
+}
+
+void Config::setLocked(bool newValue) {
+    Config::locked = newValue;
 }
 
 void Config::signalConnect() {
@@ -95,7 +103,7 @@ void Config::save() {
 }
 
 void Config::checkStatus() {
-    bool enabled = !status->isRunning();
+    bool enabled = !locked;
 
     ui->audioInputDeviceComboBox->setEnabled(enabled);
     ui->audioInputChannelsComboBox->setEnabled(enabled);
@@ -159,7 +167,7 @@ void Config::initDeviceComboBox(QComboBox *comboBox, QAudio::Mode mode) {
         comboBox->addItem(audioDeviceInfo.deviceName(), QVariant::fromValue(audioDeviceInfo));
 }
 
-void Config::updateDeviceComboBox(QComboBox *comboBox, QString currentValue) {
+void Config::updateDeviceComboBox(QComboBox *comboBox, const QString& currentValue) {
     int index = -1;
     for (int i = 0; i < comboBox->count(); i++)
         if (comboBox->itemData(i).value<QAudioDeviceInfo>().deviceName() == currentValue) {

@@ -16,7 +16,6 @@ add_executable(audioreceiver
         audioreceiver.cpp audioreceiver.hpp
         worker.cpp worker.hpp
         config.cpp config.hpp
-        status.cpp status.hpp
         default.hpp)
 
 target_link_libraries(audioreceiver

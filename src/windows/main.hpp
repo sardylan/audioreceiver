@@ -29,7 +29,6 @@
 #include <QtWidgets/QMainWindow>
 
 #include "../config.hpp"
-#include "../status.hpp"
 
 #include "../widgets/vumeter.hpp"
 
@@ -44,11 +43,13 @@ namespace audioreceiver::windows {
 
     public:
 
-        explicit Main(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent = nullptr);
+        explicit Main(audioreceiver::Config *config, QWidget *parent = nullptr);
 
         ~Main() override;
 
     public slots:
+
+        void updateWorkerStatus(bool value);
 
         void updateVuMeter(const qreal &value);
 
@@ -57,7 +58,6 @@ namespace audioreceiver::windows {
         Ui::Main *ui;
 
         audioreceiver::Config *config;
-        audioreceiver::Status *status;
 
         QLabel *statusBarClockLabel;
         QLabel *statusBarVersionLabel;
@@ -74,19 +74,19 @@ namespace audioreceiver::windows {
 
     private slots:
 
-        void updateRunning(bool value);
-
         void updateClock();
-
-        void handleRunAction();
 
     signals:
 
         void openConfigWindow();
 
-        void startAudioWorker();
+        void audioWorkerToggle(bool status);
 
-        void stopAudioWorker();
+        void bfoToggle(bool status);
+
+        void newBFOFrequency(unsigned int value);
+
+        void newGainValue(qreal value);
 
     };
 

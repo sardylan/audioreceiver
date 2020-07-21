@@ -115,12 +115,11 @@ int main(int argc, char **argv) {
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
     config = new Config();
-    status = new Status();
 
     worker = new Worker();
 
-    mainWindow = new windows::Main(config, status);
-    configWindow = new windows::Config(config, status);
+    mainWindow = new windows::Main(config);
+    configWindow = new windows::Config(config);
 
     signalConnect();
 }
@@ -130,7 +129,7 @@ AudioReceiver::~AudioReceiver() {
     delete configWindow;
 
     delete worker;
-};
+}
 
 void AudioReceiver::start() {
     qInfo() << "Starting Audio Receiver";
@@ -154,11 +153,23 @@ void AudioReceiver::stop() {
 void AudioReceiver::signalConnect() {
     connect(mainWindow, &windows::Main::openConfigWindow, this, &AudioReceiver::openConfigWindow);
 
-    connect(mainWindow, &windows::Main::startAudioWorker, worker, &Worker::start, Qt::QueuedConnection);
-    connect(mainWindow, &windows::Main::stopAudioWorker, worker, &Worker::stop, Qt::QueuedConnection);
+    connect(mainWindow, &windows::Main::audioWorkerToggle, [this](bool newStatus) {
+        if (newStatus)
+            QMetaObject::invokeMethod(worker, &Worker::start, Qt::QueuedConnection);
+        else
+            QMetaObject::invokeMethod(worker, &Worker::stop, Qt::QueuedConnection);
+    });
 
-    connect(worker, &Worker::started, [this]() { status->setRunning(true); });
-    connect(worker, &Worker::finished, [this]() { status->setRunning(false); });
+    connect(worker, &Worker::started, [this]() {
+        QMetaObject::invokeMethod(mainWindow, "updateWorkerStatus", Qt::QueuedConnection, Q_ARG(bool, true));
+        QMetaObject::invokeMethod(configWindow, "setLocked", Qt::QueuedConnection, Q_ARG(bool, true));
+    });
+
+    connect(worker, &Worker::finished, [this]() {
+        QMetaObject::invokeMethod(mainWindow, "updateWorkerStatus", Qt::QueuedConnection, Q_ARG(bool, false));
+        QMetaObject::invokeMethod(configWindow, "setLocked", Qt::QueuedConnection, Q_ARG(bool, false));
+    });
+
     connect(worker, &Worker::newRMS, mainWindow, &windows::Main::updateVuMeter);
 }
 
