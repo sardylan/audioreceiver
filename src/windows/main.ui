@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
     <class>Main</class>
-    <widget class="QMainWindow" name="mainWindow">
+    <widget class="QMainWindow" name="main">
         <property name="geometry">
             <rect>
                 <x>0</x>
@@ -13,14 +13,14 @@
         <property name="windowTitle">
             <string>Audio Receiver</string>
         </property>
-        <widget class="QWidget" name="centralwidget">
-            <layout class="QGridLayout" name="gridLayout" rowstretch="0">
-                <item row="0" column="0">
-                    <widget class="QGroupBox" name="groupBox">
+        <widget class="QWidget" name="centralWidget">
+            <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,1">
+                <item row="0" column="0" colspan="2">
+                    <widget class="QGroupBox" name="settingsGroupBox">
                         <property name="title">
-                            <string>Signals</string>
+                            <string>Settings</string>
                         </property>
-                        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,1,0" columnstretch="0,0,1,0">
+                        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0" columnstretch="0,1,0">
                             <item row="0" column="0">
                                 <widget class="QLabel" name="gainLabel">
                                     <property name="text">
@@ -28,14 +28,14 @@
                                     </property>
                                 </widget>
                             </item>
-                            <item row="0" column="1" colspan="2">
+                            <item row="0" column="1">
                                 <widget class="QSlider" name="gainSlider">
                                     <property name="orientation">
                                         <enum>Qt::Horizontal</enum>
                                     </property>
                                 </widget>
                             </item>
-                            <item row="0" column="3">
+                            <item row="0" column="2">
                                 <widget class="QLabel" name="gainValue">
                                     <property name="text">
                                         <string>TextLabel</string>
@@ -43,46 +43,45 @@
                                 </widget>
                             </item>
                             <item row="1" column="0">
-                                <widget class="QLabel" name="vuMeterlabel">
-                                    <property name="text">
-                                        <string>Level</string>
-                                    </property>
-                                </widget>
-                            </item>
-                            <item row="1" column="1" colspan="3">
-                                <widget class="QStackedWidget" name="vuMeterStackedWidget"/>
-                            </item>
-                            <item row="2" column="0" colspan="4">
-                                <widget class="QStackedWidget" name="waterfallStackedWidget"/>
-                            </item>
-                            <item row="3" column="0">
-                                <widget class="QCheckBox" name="bfoCheckBox">
+                                <widget class="QCheckBox" name="bfoEnableCheckBox">
                                     <property name="text">
                                         <string>Enable BFO</string>
                                     </property>
                                 </widget>
                             </item>
-                            <item row="3" column="1">
-                                <widget class="QLineEdit" name="bfoFrequenctValue">
+                            <item row="1" column="1">
+                                <widget class="QSlider" name="bfoFrequencySlider">
+                                    <property name="orientation">
+                                        <enum>Qt::Horizontal</enum>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="1" column="2">
+                                <widget class="QLineEdit" name="bfoFrequencyValue">
                                     <property name="text">
                                         <string>Frequency</string>
                                     </property>
                                 </widget>
                             </item>
                         </layout>
-                        <zorder>bfoCheckBox</zorder>
-                        <zorder>waterfallStackedWidget</zorder>
-                        <zorder>vuMeterlabel</zorder>
-                        <zorder>vuMeterStackedWidget</zorder>
-                        <zorder>gainLabel</zorder>
-                        <zorder>gainSlider</zorder>
-                        <zorder>gainValue</zorder>
-                        <zorder>bfoFrequenctValue</zorder>
                     </widget>
+                </item>
+                <item row="1" column="0">
+                    <widget class="QLabel" name="vuMeterlabel">
+                        <property name="text">
+                            <string>Level</string>
+                        </property>
+                    </widget>
+                </item>
+                <item row="1" column="1">
+                    <widget class="QStackedWidget" name="vuMeterStackedWidget"/>
+                </item>
+                <item row="2" column="0" colspan="2">
+                    <widget class="QStackedWidget" name="waterfallStackedWidget"/>
                 </item>
             </layout>
         </widget>
-        <widget class="QMenuBar" name="menubar">
+        <widget class="QMenuBar" name="menuBar">
             <property name="geometry">
                 <rect>
                     <x>0</x>
@@ -91,7 +90,7 @@
                     <height>29</height>
                 </rect>
             </property>
-            <widget class="QMenu" name="menu_File">
+            <widget class="QMenu" name="fileMenu">
                 <property name="title">
                     <string>&amp;File</string>
                 </property>
@@ -100,7 +99,7 @@
                 <addaction name="separator"/>
                 <addaction name="actionExit"/>
             </widget>
-            <addaction name="menu_File"/>
+            <addaction name="fileMenu"/>
         </widget>
         <widget class="QStatusBar" name="statusBar"/>
         <widget class="QToolBar" name="toolBar">
