@@ -50,12 +50,12 @@ void Config::signalConnect() {
     connect(ui->buttonBox->button(QDialogButtonBox::Reset), &QPushButton::clicked, this, &Config::handleReset);
 
     connect(ui->audioInputDeviceComboBox,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             &Config::updateInputDeviceOptions);
 
     connect(ui->audioOutputDeviceComboBox,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,
             &Config::updateOutputDeviceOptions);
 }
