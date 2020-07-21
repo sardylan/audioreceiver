@@ -41,6 +41,8 @@ Main::~Main() {
 }
 
 void Main::initUi() {
+    setWindowTitle(QString("%1 %2").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()));
+
     ui->vuMeterStackedWidget->addWidget(vuMeter);
 }
 
@@ -50,4 +52,5 @@ void Main::updateVuMeter(const qreal &value) {
 
 void Main::signalConnect() {
     connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow);
+    connect(ui->actionExit, &QAction::triggered, this, &Main::close);
 }
