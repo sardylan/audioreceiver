@@ -40,16 +40,16 @@ namespace audioreceiver::windows {
 
     public:
 
-        explicit Config(QWidget *parent = nullptr);
+        explicit Config(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent = nullptr);
 
         ~Config() override;
 
     private:
 
+        Ui::Config *ui;
+
         audioreceiver::Config *config;
         audioreceiver::Status *status;
-
-        Ui::Config *ui;
 
         void signalConnect();
 

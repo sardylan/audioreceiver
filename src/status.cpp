@@ -20,15 +20,6 @@
 
 using namespace audioreceiver;
 
-Status *Status::instance = nullptr;
-
-Status *Status::getInstance() {
-    if (Status::instance == nullptr)
-        Status::instance = new Status();
-
-    return Status::instance;
-}
-
 Status::Status(QObject *parent) : QObject(parent) {
     Status::running = false;
 }

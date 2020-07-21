@@ -114,13 +114,13 @@ int main(int argc, char **argv) {
 }
 
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
-    config = Config::getInstance();
-    status = Status::getInstance();
+    config = new Config();
+    status = new Status();
 
     worker = new Worker();
 
-    mainWindow = new windows::Main();
-    configWindow = new windows::Config();
+    mainWindow = new windows::Main(config, status);
+    configWindow = new windows::Config(config, status);
 
     signalConnect();
 }

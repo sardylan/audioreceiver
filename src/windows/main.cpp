@@ -21,8 +21,12 @@
 
 using namespace audioreceiver::windows;
 
-Main::Main(QWidget *parent) : QMainWindow(parent), ui(new Ui::Main) {
+Main::Main(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent) : QMainWindow(parent),
+                                                                                            ui(new Ui::Main) {
     ui->setupUi(this);
+
+    Main::config = config;
+    Main::status = status;
 
     vuMeter = new widgets::VUMeter(this);
 

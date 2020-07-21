@@ -28,17 +28,13 @@ namespace audioreceiver {
 
     public:
 
-        static Status *getInstance();
-
-        [[nodiscard]] bool isRunning() const;
-
-    private:
-
         explicit Status(QObject *parent = nullptr);
 
         ~Status() override;
 
-        static Status *instance;
+        [[nodiscard]] bool isRunning() const;
+
+    private:
 
         bool running;
 

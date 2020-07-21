@@ -26,6 +26,9 @@
 
 #include <QtWidgets/QMainWindow>
 
+#include "../config.hpp"
+#include "../status.hpp"
+
 #include "../widgets/vumeter.hpp"
 
 namespace Ui {
@@ -39,7 +42,7 @@ namespace audioreceiver::windows {
 
     public:
 
-        explicit Main(QWidget *parent = nullptr);
+        explicit Main(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent = nullptr);
 
         ~Main() override;
 
@@ -50,6 +53,9 @@ namespace audioreceiver::windows {
     private:
 
         Ui::Main *ui;
+
+        audioreceiver::Config *config;
+        audioreceiver::Status *status;
 
         widgets::VUMeter *vuMeter;
 

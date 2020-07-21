@@ -25,11 +25,12 @@
 
 using namespace audioreceiver::windows;
 
-Config::Config(QWidget *parent) : QDialog(parent), ui(new Ui::Config) {
+Config::Config(audioreceiver::Config *config, audioreceiver::Status *status, QWidget *parent) : QDialog(parent),
+                                                                                                ui(new Ui::Config) {
     ui->setupUi(this);
 
-    Config::config = audioreceiver::Config::getInstance();
-    Config::status = audioreceiver::Status::getInstance();
+    Config::config = config;
+    Config::status = status;
 
     signalConnect();
     initUi();

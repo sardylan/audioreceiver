@@ -23,15 +23,6 @@
 
 using namespace audioreceiver;
 
-Config *Config::instance = nullptr;
-
-Config *Config::getInstance() {
-    if (Config::instance == nullptr)
-        Config::instance = new Config();
-
-    return Config::instance;
-}
-
 Config::Config(QObject *parent) : QObject(parent) {
     audioInputDevice = CONFIG_AUDIO_INPUT_DEVICE_DEFAULT;
     audioInputChannels = CONFIG_AUDIO_INPUT_CHANNELS_DEFAULT;
@@ -39,6 +30,7 @@ Config::Config(QObject *parent) : QObject(parent) {
     audioInputSampleSize = CONFIG_AUDIO_INPUT_SAMPLE_SIZE_DEFAULT;
     audioInputSampleType = CONFIG_AUDIO_INPUT_SAMPLE_TYPE_DEFAULT;
     audioInputEndian = CONFIG_AUDIO_INPUT_ENDIAN_DEFAULT;
+    audioInputCodec = CONFIG_AUDIO_INPUT_CODEC_DEFAULT;
 
     audioOutputDevice = CONFIG_AUDIO_OUTPUT_DEVICE_DEFAULT;
     audioOutputChannels = CONFIG_AUDIO_OUTPUT_CHANNELS_DEFAULT;
@@ -46,6 +38,7 @@ Config::Config(QObject *parent) : QObject(parent) {
     audioOutputSampleSize = CONFIG_AUDIO_OUTPUT_SAMPLE_SIZE_DEFAULT;
     audioOutputSampleType = CONFIG_AUDIO_OUTPUT_SAMPLE_TYPE_DEFAULT;
     audioOutputEndian = CONFIG_AUDIO_OUTPUT_ENDIAN_DEFAULT;
+    audioOutputCodec = CONFIG_AUDIO_OUTPUT_CODEC_DEFAULT;
 }
 
 Config::~Config() = default;
