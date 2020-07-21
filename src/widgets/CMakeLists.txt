@@ -12,7 +12,7 @@ target_link_libraries(widgets
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
-        OpenGL::OpenGL)
+        OpenGL::GL)
 
 target_compile_options(widgets
         PRIVATE
