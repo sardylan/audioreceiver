@@ -88,7 +88,7 @@
                             <item row="3" column="2">
                                 <widget class="QLabel" name="audioInputCodecLabel">
                                     <property name="text">
-                                        <string>Sample size</string>
+                                        <string>Codec</string>
                                     </property>
                                 </widget>
                             </item>
