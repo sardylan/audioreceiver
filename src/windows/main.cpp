@@ -75,10 +75,13 @@ void Main::initStatusBar() {
 }
 
 void Main::signalConnect() {
+    connect(status, &Status::updateRunning, this, &Main::updateRunning);
+
     connect(clockTimer, &QTimer::timeout, this, &Main::updateClock);
 
-    connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow);
     connect(ui->actionExit, &QAction::triggered, this, &Main::close);
+    connect(ui->actionConfig, &QAction::triggered, this, &Main::openConfigWindow);
+    connect(ui->actionRun, &QAction::triggered, this, &Main::handleRunAction);
 }
 
 void Main::initUi() {
@@ -88,4 +91,15 @@ void Main::initUi() {
 
 void Main::updateClock() {
     statusBarClockLabel->setText(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss (UTC)"));
+}
+
+void Main::handleRunAction() {
+    if (ui->actionRun->isChecked())
+        QMetaObject::invokeMethod(this, &Main::startAudioWorker, Qt::QueuedConnection);
+    else
+        QMetaObject::invokeMethod(this, &Main::stopAudioWorker, Qt::QueuedConnection);
+}
+
+void Main::updateRunning(bool value) {
+    ui->actionRun->setChecked(value);
 }

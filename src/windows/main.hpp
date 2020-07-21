@@ -74,11 +74,19 @@ namespace audioreceiver::windows {
 
     private slots:
 
+        void updateRunning(bool value);
+
         void updateClock();
+
+        void handleRunAction();
 
     signals:
 
         void openConfigWindow();
+
+        void startAudioWorker();
+
+        void stopAudioWorker();
 
     };
 

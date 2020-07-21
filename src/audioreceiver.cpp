@@ -138,6 +138,8 @@ void AudioReceiver::start() {
     config->load();
     config->save();
 
+    updateWorkerParams();
+
     QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
 
     mainWindow->show();
@@ -151,8 +153,52 @@ void AudioReceiver::stop() {
 
 void AudioReceiver::signalConnect() {
     connect(mainWindow, &windows::Main::openConfigWindow, this, &AudioReceiver::openConfigWindow);
+
+    connect(mainWindow, &windows::Main::startAudioWorker, worker, &Worker::start, Qt::QueuedConnection);
+    connect(mainWindow, &windows::Main::stopAudioWorker, worker, &Worker::stop, Qt::QueuedConnection);
+
+    connect(worker, &Worker::started, [this]() { status->setRunning(true); });
+    connect(worker, &Worker::finished, [this]() { status->setRunning(false); });
+    connect(worker, &Worker::newRMS, mainWindow, &windows::Main::updateVuMeter);
 }
 
 void AudioReceiver::openConfigWindow() {
     configWindow->exec();
+    QMetaObject::invokeMethod(this, &AudioReceiver::updateWorkerParams, Qt::QueuedConnection);
+}
+
+void AudioReceiver::updateWorkerParams() {
+    QAudioDeviceInfo inputAudioDeviceInfo = QAudioDeviceInfo::defaultInputDevice();
+    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
+        if (audioDeviceInfo.deviceName() == config->getAudioInputDevice())
+            inputAudioDeviceInfo = audioDeviceInfo;
+
+    worker->setInputAudioDeviceInfo(inputAudioDeviceInfo);
+
+    QAudioFormat inputAudioFormat;
+    inputAudioFormat.setChannelCount(config->getAudioInputChannels());
+    inputAudioFormat.setSampleRate(config->getAudioInputSampleRate());
+    inputAudioFormat.setSampleSize(config->getAudioInputSampleSize());
+    inputAudioFormat.setSampleType(config->getAudioInputSampleType());
+    inputAudioFormat.setByteOrder(config->getAudioInputEndian());
+    inputAudioFormat.setCodec(config->getAudioInputCodec());
+
+    worker->setInputAudioFormat(inputAudioDeviceInfo.nearestFormat(inputAudioFormat));
+
+    QAudioDeviceInfo outputAudioDeviceInfo = QAudioDeviceInfo::defaultOutputDevice();
+    for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
+        if (audioDeviceInfo.deviceName() == config->getAudioOutputDevice())
+            outputAudioDeviceInfo = audioDeviceInfo;
+
+    worker->setOutputAudioDeviceInfo(outputAudioDeviceInfo);
+
+    QAudioFormat outputAudioFormat;
+    outputAudioFormat.setChannelCount(config->getAudioOutputChannels());
+    outputAudioFormat.setSampleRate(config->getAudioOutputSampleRate());
+    outputAudioFormat.setSampleSize(config->getAudioOutputSampleSize());
+    outputAudioFormat.setSampleType(config->getAudioOutputSampleType());
+    outputAudioFormat.setByteOrder(config->getAudioOutputEndian());
+    outputAudioFormat.setCodec(config->getAudioOutputCodec());
+
+    worker->setOutputAudioFormat(outputAudioDeviceInfo.nearestFormat(outputAudioFormat));
 }

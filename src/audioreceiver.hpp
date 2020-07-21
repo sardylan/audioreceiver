@@ -82,7 +82,10 @@ namespace audioreceiver {
 
     private slots:
 
+        void updateWorkerParams();
+
         void openConfigWindow();
+
 
     signals:
 
