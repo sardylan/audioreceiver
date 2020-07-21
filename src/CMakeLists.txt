@@ -12,6 +12,7 @@ configure_file(version.hpp.in version.hpp @ONLY)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(audioreceiver
+        WIN32 MACOSX_BUNDLE
         audioreceiver.cpp audioreceiver.hpp
         worker.cpp worker.hpp
         config.cpp config.hpp
