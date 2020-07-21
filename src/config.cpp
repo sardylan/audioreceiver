@@ -98,6 +98,14 @@ void Config::setAudioInputEndian(QAudioFormat::Endian newValue) {
     Config::audioInputEndian = newValue;
 }
 
+const QString &Config::getAudioInputCodec() const {
+    return audioInputCodec;
+}
+
+void Config::setAudioInputCodec(const QString &newValue) {
+    Config::audioInputCodec = newValue;
+}
+
 const QString &Config::getAudioOutputDevice() const {
     return audioOutputDevice;
 }
@@ -146,6 +154,14 @@ void Config::setAudioOutputEndian(QAudioFormat::Endian newValue) {
     Config::audioOutputEndian = newValue;
 }
 
+const QString &Config::getAudioOutputCodec() const {
+    return audioOutputCodec;
+}
+
+void Config::setAudioOutputCodec(const QString &newValue) {
+    Config::audioOutputCodec = newValue;
+}
+
 void Config::load() {
     QSettings settings;
 
@@ -158,6 +174,7 @@ void Config::load() {
             settings.value("sampleType", CONFIG_AUDIO_INPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
     setAudioInputEndian(
             settings.value("endian", CONFIG_AUDIO_INPUT_ENDIAN_DEFAULT).value<QAudioFormat::Endian>());
+    setAudioInputCodec(settings.value("codec", CONFIG_AUDIO_INPUT_CODEC_DEFAULT).value<QString>());
     settings.endGroup();
 
     settings.beginGroup("audioOutput");
@@ -169,6 +186,7 @@ void Config::load() {
             settings.value("sampleType", CONFIG_AUDIO_OUTPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
     setAudioOutputEndian(
             settings.value("endian", CONFIG_AUDIO_OUTPUT_ENDIAN_DEFAULT).value<QAudioFormat::Endian>());
+    setAudioInputCodec(settings.value("codec", CONFIG_AUDIO_OUTPUT_CODEC_DEFAULT).value<QString>());
     settings.endGroup();
 }
 
@@ -182,6 +200,7 @@ void Config::save() const {
     settings.setValue("sampleSize", getAudioInputSampleSize());
     settings.setValue("sampleType", getAudioInputSampleType());
     settings.setValue("endian", getAudioInputEndian());
+    settings.setValue("codec", getAudioInputCodec());
     settings.endGroup();
 
     settings.beginGroup("audioOutput");
@@ -191,6 +210,7 @@ void Config::save() const {
     settings.setValue("sampleSize", getAudioOutputSampleSize());
     settings.setValue("sampleType", getAudioOutputSampleType());
     settings.setValue("endian", getAudioOutputEndian());
+    settings.setValue("codec", getAudioOutputCodec());
     settings.endGroup();
 
     settings.sync();

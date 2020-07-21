@@ -56,6 +56,10 @@ namespace audioreceiver {
 
         void setAudioInputEndian(QAudioFormat::Endian audioInputEndian);
 
+        [[nodiscard]] const QString &getAudioInputCodec() const;
+
+        void setAudioInputCodec(const QString &newValue);
+
         [[nodiscard]] const QString &getAudioOutputDevice() const;
 
         void setAudioOutputDevice(const QString &newValue);
@@ -80,6 +84,10 @@ namespace audioreceiver {
 
         void setAudioOutputEndian(QAudioFormat::Endian newValue);
 
+        [[nodiscard]] const QString &getAudioOutputCodec() const;
+
+        void setAudioOutputCodec(const QString &newValue);
+
     public slots:
 
         void load();
@@ -100,6 +108,7 @@ namespace audioreceiver {
         int audioInputSampleSize;
         QAudioFormat::SampleType audioInputSampleType;
         QAudioFormat::Endian audioInputEndian;
+        QString audioInputCodec;
 
         QString audioOutputDevice;
         int audioOutputChannels;
@@ -107,6 +116,7 @@ namespace audioreceiver {
         int audioOutputSampleSize;
         QAudioFormat::SampleType audioOutputSampleType;
         QAudioFormat::Endian audioOutputEndian;
+        QString audioOutputCodec;
 
     };
 

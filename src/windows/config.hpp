@@ -21,6 +21,10 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QDialog>
+#include <QtWidgets/QComboBox>
+
+#include <QtMultimedia/QAudioFormat>
+#include <QtMultimedia/QAudioDeviceInfo>
 
 #include "../config.hpp"
 #include "../status.hpp"
@@ -56,6 +60,38 @@ namespace audioreceiver::windows {
         void save();
 
         void checkStatus();
+
+        static void
+        initDeviceComboBox(QComboBox *comboBox,
+                           QAudio::Mode mode);
+
+        static void
+        updateDeviceComboBox(QComboBox *comboBox,
+                             QString currentValue);
+
+        static void
+        updateChannelsComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
+                               int currentValue);
+
+        static void
+        updateSampleRateComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
+                                 int currentValue);
+
+        static void
+        updateSampleSizeComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
+                                 int currentValue);
+
+        static void
+        updateSampleTypeComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
+                                 QAudioFormat::SampleType currentValue);
+
+        static void
+        updateEndianComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
+                             QAudioFormat::Endian currentValue);
+
+        static void
+        updateCodecComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
+                            const QString &currentValue);
 
     private slots:
 

@@ -23,7 +23,7 @@
                         <attribute name="title">
                             <string>Audio Input</string>
                         </attribute>
-                        <layout class="QGridLayout" name="audioInputGridLayout" rowstretch="0,0,0,1"
+                        <layout class="QGridLayout" name="audioInputGridLayout" rowstretch="0,0,0,0,1"
                                 columnstretch="0,1,0,1">
                             <item row="0" column="0">
                                 <widget class="QLabel" name="audioInputDeviceLabel">
@@ -76,6 +76,26 @@
                                 <widget class="QComboBox" name="audioInputSampleSizeComboBox"/>
                             </item>
                             <item row="3" column="0">
+                                <widget class="QLabel" name="audioInputEndianLabel">
+                                    <property name="text">
+                                        <string>Endianess</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="3" column="1">
+                                <widget class="QComboBox" name="audioInputEndianComboBox"/>
+                            </item>
+                            <item row="3" column="2">
+                                <widget class="QLabel" name="audioInputCodecLabel">
+                                    <property name="text">
+                                        <string>Sample size</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="3" column="3">
+                                <widget class="QComboBox" name="audioInputCodecComboBox"/>
+                            </item>
+                            <item row="4" column="0">
                                 <spacer name="inputVerticalSpacer">
                                     <property name="orientation">
                                         <enum>Qt::Vertical</enum>
@@ -94,7 +114,7 @@
                         <attribute name="title">
                             <string>Audio Output</string>
                         </attribute>
-                        <layout class="QGridLayout" name="audioOutputGridLayout" rowstretch="0,0,0,1"
+                        <layout class="QGridLayout" name="audioOutputGridLayout" rowstretch="0,0,0,0,1"
                                 columnstretch="0,1,0,1">
                             <item row="0" column="0">
                                 <widget class="QLabel" name="audioOutputDeviceLabel">
@@ -147,6 +167,26 @@
                                 <widget class="QComboBox" name="audioOutputSampleSizeComboBox"/>
                             </item>
                             <item row="3" column="0">
+                                <widget class="QLabel" name="audioOutputEndianLabel">
+                                    <property name="text">
+                                        <string>Endianess</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="3" column="1">
+                                <widget class="QComboBox" name="audioOutputEndianComboBox"/>
+                            </item>
+                            <item row="3" column="2">
+                                <widget class="QLabel" name="audioOutputCodecLabel">
+                                    <property name="text">
+                                        <string>Codec</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="3" column="3">
+                                <widget class="QComboBox" name="audioOutputCodecComboBox"/>
+                            </item>
+                            <item row="4" column="0">
                                 <spacer name="outputVerticalSpacer">
                                     <property name="orientation">
                                         <enum>Qt::Vertical</enum>
