@@ -56,28 +56,26 @@ void BFO::setEnabled(bool value) {
 }
 
 QList<qreal> BFO::compute(const QList<qreal> &values) {
-    qDebug() << "BFO start";
-
-    QList<qreal> output;
+//    qDebug() << "BFO start";
 
     if (frequency == 0)
-        return output;
+        return values;
 
     int len = values.length();
 
     const QList<qreal> &beats = generateSine(len);
 
     if (!enabled)
-        return output;
+        return values;
 
+    QList<qreal> output;
     for (int i = 0; i < values.length() && i < beats.length(); i++)
         output.append(values[i] * beats[i]);
 
-    qDebug() << "BFO end";
+//    qDebug() << "BFO end";
 
     return output;
 }
-
 
 QList<qreal> BFO::generateSine(int len) {
     const qreal pulse = 2 * M_PI * frequency;

@@ -84,10 +84,9 @@ namespace audioreceiver {
 
         void openConfigWindow();
 
+        void handleNewWorkerStatus(bool newStatus);
 
     signals:
-
-        void started();
 
         void finished();
 

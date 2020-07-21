@@ -40,15 +40,15 @@ namespace audioreceiver::dsp {
 
         [[nodiscard]] bool isEnabled() const;
 
-        void setEnabled(bool value);
-
         [[nodiscard]] unsigned int getFrequency() const;
-
-        void setFrequency(unsigned int value);
 
     public slots:
 
         Q_INVOKABLE QList<qreal> compute(const QList<qreal> &values);
+
+        void setEnabled(bool value);
+
+        void setFrequency(unsigned int value);
 
     private:
 

@@ -138,8 +138,7 @@ void AudioReceiver::start() {
     config->save();
 
     updateWorkerParams();
-
-    QMetaObject::invokeMethod(this, &AudioReceiver::started, Qt::QueuedConnection);
+    handleNewWorkerStatus(false);
 
     mainWindow->show();
 }
@@ -152,25 +151,22 @@ void AudioReceiver::stop() {
 
 void AudioReceiver::signalConnect() {
     connect(mainWindow, &windows::Main::openConfigWindow, this, &AudioReceiver::openConfigWindow);
-
     connect(mainWindow, &windows::Main::audioWorkerToggle, [this](bool newStatus) {
         if (newStatus)
             QMetaObject::invokeMethod(worker, &Worker::start, Qt::QueuedConnection);
         else
             QMetaObject::invokeMethod(worker, &Worker::stop, Qt::QueuedConnection);
     });
+    connect(mainWindow, &windows::Main::bfoToggle, worker, &Worker::setBFOStatus, Qt::QueuedConnection);
+    connect(mainWindow, &windows::Main::newBFOFrequency, worker, &Worker::setBFOFrequency);
 
-    connect(worker, &Worker::started, [this]() {
-        QMetaObject::invokeMethod(mainWindow, "updateWorkerStatus", Qt::QueuedConnection, Q_ARG(bool, true));
-        QMetaObject::invokeMethod(configWindow, "setLocked", Qt::QueuedConnection, Q_ARG(bool, true));
-    });
-
-    connect(worker, &Worker::finished, [this]() {
-        QMetaObject::invokeMethod(mainWindow, "updateWorkerStatus", Qt::QueuedConnection, Q_ARG(bool, false));
-        QMetaObject::invokeMethod(configWindow, "setLocked", Qt::QueuedConnection, Q_ARG(bool, false));
-    });
-
+    connect(worker, &Worker::newStatus, this, &AudioReceiver::handleNewWorkerStatus);
     connect(worker, &Worker::newRMS, mainWindow, &windows::Main::updateVuMeter);
+}
+
+void AudioReceiver::handleNewWorkerStatus(bool newStatus) {
+    QMetaObject::invokeMethod(mainWindow, "updateWorkerStatus", Qt::QueuedConnection, Q_ARG(bool, newStatus));
+    QMetaObject::invokeMethod(configWindow, "setLocked", Qt::QueuedConnection, Q_ARG(bool, newStatus));
 }
 
 void AudioReceiver::openConfigWindow() {
@@ -194,7 +190,8 @@ void AudioReceiver::updateWorkerParams() {
     inputAudioFormat.setByteOrder(config->getAudioInputEndian());
     inputAudioFormat.setCodec(config->getAudioInputCodec());
 
-    worker->setInputAudioFormat(inputAudioDeviceInfo.nearestFormat(inputAudioFormat));
+    inputAudioFormat = inputAudioDeviceInfo.nearestFormat(inputAudioFormat);
+    worker->setInputAudioFormat(inputAudioFormat);
 
     QAudioDeviceInfo outputAudioDeviceInfo = QAudioDeviceInfo::defaultOutputDevice();
     for (const QAudioDeviceInfo &audioDeviceInfo: QAudioDeviceInfo::availableDevices(QAudio::AudioOutput))
@@ -211,5 +208,13 @@ void AudioReceiver::updateWorkerParams() {
     outputAudioFormat.setByteOrder(config->getAudioOutputEndian());
     outputAudioFormat.setCodec(config->getAudioOutputCodec());
 
-    worker->setOutputAudioFormat(outputAudioDeviceInfo.nearestFormat(outputAudioFormat));
+    outputAudioFormat = outputAudioDeviceInfo.nearestFormat(outputAudioFormat);
+    worker->setOutputAudioFormat(outputAudioFormat);
+
+    QMetaObject::invokeMethod(mainWindow, "updateAudioDevicesParams", Qt::QueuedConnection,
+                              Q_ARG(QAudioDeviceInfo, inputAudioDeviceInfo),
+                              Q_ARG(QAudioFormat, inputAudioFormat),
+                              Q_ARG(QAudioDeviceInfo, outputAudioDeviceInfo),
+                              Q_ARG(QAudioFormat, outputAudioFormat)
+    );
 }

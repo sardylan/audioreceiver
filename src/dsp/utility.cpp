@@ -169,7 +169,7 @@ QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat
 }
 
 qreal Utility::rms(const QList<qreal> &data) {
-    qDebug() << "RMS start";
+//    qDebug() << "RMS start";
 
     qreal sum = 0;
 
@@ -182,7 +182,7 @@ qreal Utility::rms(const QList<qreal> &data) {
     qreal mean = sum / data.length();
     qreal root = qSqrt(mean);
 
-    qDebug() << "RMS end";
+//    qDebug() << "RMS end";
 
     return root;
 }

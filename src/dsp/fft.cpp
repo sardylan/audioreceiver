@@ -39,7 +39,7 @@ FFT::~FFT() {
 }
 
 QList<qreal> FFT::compute(const QList<qreal> &data) {
-    qDebug() << "FFT start";
+//    qDebug() << "FFT start";
 
     fftLock.lock();
 
@@ -61,7 +61,7 @@ QList<qreal> FFT::compute(const QList<qreal> &data) {
 
     fftLock.unlock();
 
-    qDebug() << "FFT end";
+//    qDebug() << "FFT end";
 
     return fft;
 }

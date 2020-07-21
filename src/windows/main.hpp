@@ -28,6 +28,9 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 
+#include <QtMultimedia/QAudioDeviceInfo>
+#include <QtMultimedia/QAudioFormat>
+
 #include "../config.hpp"
 
 #include "../widgets/vumeter.hpp"
@@ -49,6 +52,9 @@ namespace audioreceiver::windows {
 
     public slots:
 
+        void updateAudioDevicesParams(QAudioDeviceInfo inputAudioDeviceInfo, QAudioFormat inputAudioFormat,
+                                      QAudioDeviceInfo outputAudioDeviceInfo, QAudioFormat outputAudioFormat);
+
         void updateWorkerStatus(bool value);
 
         void updateVuMeter(const qreal &value);
@@ -61,6 +67,10 @@ namespace audioreceiver::windows {
 
         QLabel *statusBarClockLabel;
         QLabel *statusBarVersionLabel;
+        QLabel *statusBarAudioInputDevice;
+        QLabel *statusBarAudioInputFormat;
+        QLabel *statusBarAudioOutputDevice;
+        QLabel *statusBarAudioOutputFormat;
 
         QTimer *clockTimer;
 
@@ -75,6 +85,10 @@ namespace audioreceiver::windows {
     private slots:
 
         void updateClock();
+
+        void updateBFOEnabled();
+
+        void updateBFOValue();
 
     signals:
 

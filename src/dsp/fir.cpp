@@ -46,7 +46,7 @@ QList<qreal> FIR::compute(const QList<qreal> &input) {
     if (len <= 0)
         return input;
 
-    qDebug() << "FIR start";
+//    qDebug() << "FIR start";
 
     QVector<qreal> output;
     output.resize(len);
@@ -63,7 +63,7 @@ QList<qreal> FIR::compute(const QList<qreal> &input) {
         }
     }
 
-    qDebug() << "FIR end";
+//    qDebug() << "FIR end";
 
     return output.toList();
 }

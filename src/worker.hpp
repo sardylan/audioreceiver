@@ -67,6 +67,10 @@ namespace audioreceiver {
 
         void stop() override;
 
+        void setBFOStatus(bool newStatus);
+
+        void setBFOFrequency(unsigned int frequency);
+
     private:
 
         audio::Source *audioSource;
@@ -88,9 +92,7 @@ namespace audioreceiver {
 
     signals:
 
-        void started();
-
-        void finished();
+        void newStatus(bool newStatus);
 
         void newRMS(const qreal &rms);
 

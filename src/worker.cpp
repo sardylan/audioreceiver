@@ -101,7 +101,7 @@ void Worker::start() {
     QMetaObject::invokeMethod(audioDestination, &audio::Destination::start, Qt::QueuedConnection);
     QMetaObject::invokeMethod(audioSource, &audio::Source::start, Qt::QueuedConnection);
 
-    QMetaObject::invokeMethod(this, &Worker::started, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "newStatus", Qt::QueuedConnection, Q_ARG(bool, true));
 }
 
 void Worker::stop() {
@@ -114,7 +114,7 @@ void Worker::stop() {
     fft->deleteLater();
     fir->deleteLater();
 
-    QMetaObject::invokeMethod(this, &Worker::finished, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(this, "newStatus", Qt::QueuedConnection, Q_ARG(bool, false));
 }
 
 void Worker::newFrame(const model::Frame &frame) {
@@ -140,8 +140,16 @@ void Worker::newFrame(const model::Frame &frame) {
             Q_ARG(const QList<qreal>, newValues)
     );
 
-    qDebug()
-            << "Frame:" << frame
-            << "-"
-            << "RMS:" << rms;
+//    qDebug()
+//            << "Frame:" << frame
+//            << "-"
+//            << "RMS:" << rms;
+}
+
+void Worker::setBFOStatus(bool newStatus) {
+    QMetaObject::invokeMethod(bfo, "setEnabled", Qt::QueuedConnection, Q_ARG(bool, newStatus));
+}
+
+void Worker::setBFOFrequency(unsigned int frequency) {
+    QMetaObject::invokeMethod(bfo, "setFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, frequency));
 }

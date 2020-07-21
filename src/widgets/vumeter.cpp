@@ -128,15 +128,11 @@ void VUMeter::initializeGL() {
 }
 
 void VUMeter::resizeGL(int w, int h) {
-    qDebug() << "Resize" << w << "x" << h;
-
     width = w;
     height = h;
 }
 
 void VUMeter::paintGL() {
-    qDebug() << "paintGL" << valueThreshold;
-
     if (width == 0 || height == 0)
         return;
 
