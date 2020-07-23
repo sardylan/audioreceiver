@@ -186,3 +186,14 @@ qreal Utility::rms(const QList<qreal> &data) {
 
     return root;
 }
+
+qreal Utility::logScale(qreal value) {
+    if (value < 0)
+        return 0;
+    if (value > 1)
+        return 1;
+
+    qreal v = 9 * value;
+    qreal ln = log10(v + 1);
+    return ln;
+}

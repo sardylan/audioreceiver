@@ -21,6 +21,7 @@
 #include <QtCore/QDebug>
 
 #include "fft.hpp"
+#include "utility.hpp"
 
 using namespace audioreceiver::dsp;
 
@@ -39,6 +40,14 @@ FFT::~FFT() {
 }
 
 QList<qreal> FFT::compute(const QList<qreal> &data) {
+    return computeFFT(data, false);
+}
+
+QList<qreal> FFT::computeLog(const QList<qreal> &data) {
+    return computeFFT(data, true);
+}
+
+QList<qreal> FFT::computeFFT(const QList<qreal> &data, bool logScale) {
 //    qDebug() << "FFT start";
 
     fftLock.lock();
@@ -56,6 +65,10 @@ QList<qreal> FFT::compute(const QList<qreal> &data) {
         auto re = (qreal) output[i];
         auto im = (qreal) output[size - i];
         qreal magnitude = qSqrt((re * re) + (im * im));
+
+        if (logScale)
+            magnitude = Utility::logScale(magnitude) * size;
+
         fft.append(magnitude);
     }
 

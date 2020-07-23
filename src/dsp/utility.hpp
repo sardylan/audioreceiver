@@ -36,6 +36,8 @@ namespace audioreceiver::dsp {
 
         static qreal rms(const QList<qreal> &data);
 
+        static qreal logScale(qreal value);
+
     };
 
 }

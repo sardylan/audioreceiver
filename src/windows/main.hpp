@@ -34,6 +34,7 @@
 #include "../config.hpp"
 
 #include "../widgets/vumeter.hpp"
+#include "../widgets/waterfall.hpp"
 
 namespace Ui {
     class Main;
@@ -52,12 +53,15 @@ namespace audioreceiver::windows {
 
     public slots:
 
-        void updateAudioDevicesParams(QAudioDeviceInfo inputAudioDeviceInfo, QAudioFormat inputAudioFormat,
-                                      QAudioDeviceInfo outputAudioDeviceInfo, QAudioFormat outputAudioFormat);
+        void
+        updateAudioDevicesParams(const QAudioDeviceInfo &inputAudioDeviceInfo, const QAudioFormat &inputAudioFormat,
+                                 const QAudioDeviceInfo &outputAudioDeviceInfo, const QAudioFormat &outputAudioFormat);
 
         void updateWorkerStatus(bool value);
 
         void updateVuMeter(const qreal &value);
+
+        void updateWaterfall(const QList<qreal> &values);
 
     private:
 
@@ -75,6 +79,7 @@ namespace audioreceiver::windows {
         QTimer *clockTimer;
 
         widgets::VUMeter *vuMeter;
+        widgets::Waterfall *waterfall;
 
         void initStatusBar();
 

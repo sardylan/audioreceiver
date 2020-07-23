@@ -27,6 +27,7 @@ Main::Main(audioreceiver::Config *config, QWidget *parent) : QMainWindow(parent)
     Main::config = config;
 
     vuMeter = new widgets::VUMeter(this);
+    waterfall = new widgets::Waterfall(this);
 
     clockTimer = new QTimer(this);
 
@@ -44,6 +45,7 @@ Main::Main(audioreceiver::Config *config, QWidget *parent) : QMainWindow(parent)
 }
 
 Main::~Main() {
+    delete waterfall;
     delete vuMeter;
 
     delete clockTimer;
@@ -58,14 +60,19 @@ Main::~Main() {
     delete ui;
 }
 
-void Main::updateAudioDevicesParams(QAudioDeviceInfo inputAudioDeviceInfo, QAudioFormat inputAudioFormat,
-                                    QAudioDeviceInfo outputAudioDeviceInfo, QAudioFormat outputAudioFormat) {
+void Main::updateAudioDevicesParams(const QAudioDeviceInfo &inputAudioDeviceInfo,
+                                    const QAudioFormat &inputAudioFormat,
+                                    const QAudioDeviceInfo &outputAudioDeviceInfo,
+                                    const QAudioFormat &outputAudioFormat) {
     statusBarAudioInputDevice->setText(inputAudioDeviceInfo.deviceName());
     statusBarAudioInputFormat->setText(inputAudioFormat.codec());
     statusBarAudioOutputDevice->setText(outputAudioDeviceInfo.deviceName());
     statusBarAudioInputFormat->setText(outputAudioFormat.codec());
 
-    ui->bfoFrequencySlider->setMaximum(inputAudioFormat.sampleRate() / 2);
+    int sampleFrequency = inputAudioFormat.sampleRate() / 2;
+
+    ui->bfoFrequencySlider->setMaximum(sampleFrequency);
+    waterfall->setFrequency(sampleFrequency);
 }
 
 void Main::updateWorkerStatus(bool value) {
@@ -87,10 +94,16 @@ void Main::updateWorkerStatus(bool value) {
         vuMeter->setValue(0);
         vuMeter->setEnabled(false);
     }
+
+    waterfall->setEnabled(value);
 }
 
 void Main::updateVuMeter(const qreal &value) {
     vuMeter->setValue(value);
+}
+
+void Main::updateWaterfall(const QList<qreal> &values) {
+    QMetaObject::invokeMethod(waterfall, "addData", Qt::QueuedConnection, Q_ARG(const QList<qreal>, values));
 }
 
 void Main::initStatusBar() {
@@ -156,7 +169,9 @@ void Main::initUi() {
     updateBFOEnabled();
 
     setWindowTitle(QString("%1 %2").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()));
+
     ui->vuMeterStackedWidget->addWidget(vuMeter);
+    ui->waterfallStackedWidget->addWidget(waterfall);
 }
 
 void Main::updateClock() {

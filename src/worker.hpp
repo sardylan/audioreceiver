@@ -94,11 +94,11 @@ namespace audioreceiver {
 
         void newStatus(bool newStatus);
 
-        void newRMS(const qreal &rms);
+        void newRMS(const qreal &values);
 
-        void newFFT(const QList<qreal> &rms);
+        void newFFT(const QList<qreal> &values);
 
-        void newValues(const QList<qreal> &rms);
+        void newValues(const QList<qreal> &values);
 
     };
 

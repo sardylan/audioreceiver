@@ -162,6 +162,7 @@ void AudioReceiver::signalConnect() {
 
     connect(worker, &Worker::newStatus, this, &AudioReceiver::handleNewWorkerStatus);
     connect(worker, &Worker::newRMS, mainWindow, &windows::Main::updateVuMeter);
+    connect(worker, &Worker::newFFT, mainWindow, &windows::Main::updateWaterfall);
 }
 
 void AudioReceiver::handleNewWorkerStatus(bool newStatus) {

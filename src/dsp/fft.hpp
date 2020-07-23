@@ -50,6 +50,8 @@ namespace audioreceiver::dsp {
 
         Q_INVOKABLE QList<qreal> compute(const QList<qreal> &data);
 
+        Q_INVOKABLE QList<qreal> computeLog(const QList<qreal> &data);
+
     private:
 
         const unsigned int size;
@@ -60,6 +62,8 @@ namespace audioreceiver::dsp {
         fftw_plan plan;
 
         QMutex fftLock;
+
+        QList<qreal> computeFFT(const QList<qreal> &data, bool logScale);
 
     };
 

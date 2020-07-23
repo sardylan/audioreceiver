@@ -118,7 +118,7 @@ void Worker::stop() {
 }
 
 void Worker::newFrame(const model::Frame &frame) {
-    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::compute, frame.getValues());
+    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::computeLog, frame.getValues());
     QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, frame.getValues());
     QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rms, frame.getValues());
 

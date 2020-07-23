@@ -6,7 +6,8 @@ find_package(OpenGL REQUIRED
 
 add_library(widgets
         vumeter.cpp vumeter.hpp
-        waterfall.cpp waterfall.hpp)
+        waterfall.cpp waterfall.hpp
+        waterfall_color.hpp)
 
 target_link_libraries(widgets
         Qt5::Core

@@ -37,6 +37,45 @@ namespace audioreceiver::widgets {
 
         ~Waterfall() override;
 
+        [[nodiscard]] unsigned int getFrequency() const;
+
+
+        [[nodiscard]] bool isBfoEnabled() const;
+
+
+        [[nodiscard]] unsigned int getBfoFrequency() const;
+
+    public slots:
+
+        void setFrequency(unsigned int newValue);
+
+        void setBfoEnabled(bool newValue);
+
+        void setBfoFrequency(unsigned int newValue);
+
+        void addData(const QList<qreal> &values);
+
+    protected:
+
+        void initializeGL() override;
+
+        void resizeGL(int w, int h) override;
+
+        void paintGL() override;
+
+    private:
+
+        int width;
+        int height;
+
+        unsigned int frequency;
+        QList<QList<qreal>> dataList;
+
+        bool bfoEnabled;
+        unsigned int bfoFrequency;
+
+        void cleanDataList();
+
     };
 
 }
