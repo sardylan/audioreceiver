@@ -12,7 +12,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 set (APPLICATION_NAME "Audio Receiver")
-set (APPLICATION_VERSION "0.8.1")
+set (APPLICATION_VERSION "0.8.2")
 
 set (ORGANIZATION_NAME "The HellNet.org")
 set (ORGANIZATION_DOMAIN "thehellnet.org")
