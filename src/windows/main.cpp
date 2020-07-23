@@ -115,6 +115,8 @@ void Main::updateWaterfall(const QList<qreal> &values) {
 void Main::updateBFOEnabled() {
     bool status = ui->bfoEnableCheckBox->isChecked();
 
+    waterfall->setBfoEnabled(status);
+
     ui->bfoFrequencySlider->setEnabled(status);
     ui->bfoFrequencyValue->setEnabled(status);
 }
@@ -133,6 +135,7 @@ void Main::updateGainValue() {
 void Main::updateBFOValue() {
     int value = ui->bfoFrequencySlider->value();
     ui->bfoFrequencyValue->setText(QString("%1 Hz").arg(value));
+    waterfall->setBfoFrequency(value);
     QMetaObject::invokeMethod(this, "newBFOFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, value));
 }
 

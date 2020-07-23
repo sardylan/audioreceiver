@@ -140,16 +140,16 @@ void Waterfall::paintGL() {
 //            glEnd();
 //        }
 //    }
-//
-//    if (bfoEnabled && bfoFrequency >= 0 && bfoFrequency <= maxFrequency) {
-//        float x = (float) bfoFrequency / maxFrequency;
-//        glBegin(GL_LINES);
-//        glColor4ub(255, 0, 0, 64);
-//        glVertex2f(x, 0);
-//        glVertex2f(x, height);
-//        glEnd();
-//    }
-//
+
+    if (bfoEnabled && bfoFrequency >= 0 && bfoFrequency <= frequency) {
+        qreal x = (qreal) bfoFrequency / frequency;
+        glBegin(GL_LINES);
+        glColor4ub(255, 0, 0, 64);
+        glVertex2d(x, 0);
+        glVertex2d(x, height);
+        glEnd();
+    }
+
 //    if (showMousePos) {
 //        float x = (float) mousePosX / width;
 //        glBegin(GL_LINES);
