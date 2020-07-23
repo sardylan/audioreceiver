@@ -94,6 +94,8 @@ namespace audioreceiver {
 
         void newStatus(bool newStatus);
 
+        void bufferSize(const int &size);
+
         void newRMS(const qreal &values);
 
         void newFFT(const QList<qreal> &values);

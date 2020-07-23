@@ -36,6 +36,8 @@
 #include "../widgets/vumeter.hpp"
 #include "../widgets/waterfall.hpp"
 
+#define AUDIORECEIVER_AUDIO_BUFFER_SIZE_MAX 32768
+
 namespace Ui {
     class Main;
 }
@@ -58,6 +60,8 @@ namespace audioreceiver::windows {
                                  const QAudioDeviceInfo &outputAudioDeviceInfo, const QAudioFormat &outputAudioFormat);
 
         void updateWorkerStatus(bool value);
+
+        void updateBufferSize(const int &size);
 
         void updateVuMeter(const qreal &value);
 

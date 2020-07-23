@@ -92,6 +92,18 @@ void Main::updateWorkerStatus(bool value) {
     waterfall->setEnabled(value);
 }
 
+void Main::updateBufferSize(const int &size) {
+    ui->audioInputBufferValue->setText(QString("%1").arg(size));
+
+    qreal value = (qreal) size / AUDIORECEIVER_AUDIO_BUFFER_SIZE_MAX;
+    if (value < 0)
+        value = 0;
+    if (value > 1)
+        value = 1;
+
+    ui->audioInputBufferProgressBar->setValue((int) (value * 100));
+}
+
 void Main::updateVuMeter(const qreal &value) {
     vuMeter->setValue(value);
 }

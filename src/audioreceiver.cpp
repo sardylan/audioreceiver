@@ -158,11 +158,13 @@ void AudioReceiver::signalConnect() {
             QMetaObject::invokeMethod(worker, &Worker::stop, Qt::QueuedConnection);
     });
     connect(mainWindow, &windows::Main::bfoToggle, worker, &Worker::setBFOStatus, Qt::QueuedConnection);
-    connect(mainWindow, &windows::Main::newBFOFrequency, worker, &Worker::setBFOFrequency);
+    connect(mainWindow, &windows::Main::newBFOFrequency, worker, &Worker::setBFOFrequency, Qt::QueuedConnection);
 
     connect(worker, &Worker::newStatus, this, &AudioReceiver::handleNewWorkerStatus);
-    connect(worker, &Worker::newRMS, mainWindow, &windows::Main::updateVuMeter);
-    connect(worker, &Worker::newFFT, mainWindow, &windows::Main::updateWaterfall);
+
+    connect(worker, &Worker::bufferSize, mainWindow, &windows::Main::updateBufferSize, Qt::QueuedConnection);
+    connect(worker, &Worker::newRMS, mainWindow, &windows::Main::updateVuMeter, Qt::QueuedConnection);
+    connect(worker, &Worker::newFFT, mainWindow, &windows::Main::updateWaterfall, Qt::QueuedConnection);
 }
 
 void AudioReceiver::handleNewWorkerStatus(bool newStatus) {

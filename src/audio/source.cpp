@@ -111,8 +111,6 @@ void Source::readAudioBytes() {
     for (char c: rawData)
         buffer->append(c);
 
-    emitBufferSize();
-
     int bytesToRead = audioFormat.bytesForFrames(frameSize);
 
     while (buffer->size() >= bytesToRead) {
@@ -131,6 +129,8 @@ void Source::readAudioBytes() {
                 Q_ARG(const audioreceiver::model::Frame, frame)
         );
     }
+
+    emitBufferSize();
 }
 
 void Source::emitBufferSize() {

@@ -37,6 +37,7 @@ Worker::Worker(QObject *parent) : Service(parent) {
     fir = nullptr;
 
     connect(audioSource, &audio::Source::newFrame, this, &Worker::newFrame);
+    connect(audioSource, &audio::Source::bufferSize, this, &Worker::bufferSize, Qt::QueuedConnection);
 }
 
 Worker::~Worker() {
