@@ -35,8 +35,6 @@ Main::Main(audioreceiver::Config *config, QWidget *parent) : QMainWindow(parent)
     statusBarVersionLabel = new QLabel(this);
     statusBarAudioInputDevice = new QLabel(this);
     statusBarAudioInputFormat = new QLabel(this);
-    statusBarAudioOutputDevice = new QLabel(this);
-    statusBarAudioOutputFormat = new QLabel(this);
 
 
     signalConnect();
@@ -54,8 +52,6 @@ Main::~Main() {
     delete statusBarVersionLabel;
     delete statusBarAudioInputDevice;
     delete statusBarAudioInputFormat;
-    delete statusBarAudioOutputDevice;
-    delete statusBarAudioOutputFormat;
 
     delete ui;
 }
@@ -65,9 +61,7 @@ void Main::updateAudioDevicesParams(const QAudioDeviceInfo &inputAudioDeviceInfo
                                     const QAudioDeviceInfo &outputAudioDeviceInfo,
                                     const QAudioFormat &outputAudioFormat) {
     statusBarAudioInputDevice->setText(inputAudioDeviceInfo.deviceName());
-    statusBarAudioInputFormat->setText(inputAudioFormat.codec());
-    statusBarAudioOutputDevice->setText(outputAudioDeviceInfo.deviceName());
-    statusBarAudioInputFormat->setText(outputAudioFormat.codec());
+    statusBarAudioInputFormat->setText(prepareAudioFormatString(inputAudioFormat));
 
     int sampleFrequency = inputAudioFormat.sampleRate() / 2;
 
@@ -124,13 +118,10 @@ void Main::initStatusBar() {
     statusBarClockLabel->setStyleSheet("padding-left: 3px; padding-right: 3px;");
     ui->statusBar->addPermanentWidget(statusBarClockLabel);
 
+    statusBarAudioInputDevice->setStyleSheet("padding-left: 3px; padding-right: 3px;");
     ui->statusBar->addWidget(statusBarAudioInputDevice);
-
+    statusBarAudioInputFormat->setStyleSheet("padding-left: 3px; padding-right: 3px;");
     ui->statusBar->addWidget(statusBarAudioInputFormat);
-
-    ui->statusBar->addWidget(statusBarAudioOutputDevice);
-
-    ui->statusBar->addWidget(statusBarAudioOutputFormat);
 }
 
 void Main::updateBFOEnabled() {
@@ -176,4 +167,31 @@ void Main::initUi() {
 
 void Main::updateClock() {
     statusBarClockLabel->setText(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss (UTC)"));
+}
+
+QString Main::prepareAudioFormatString(const QAudioFormat &inputAudioFormat) {
+    QString type;
+    switch (inputAudioFormat.sampleType()) {
+        case QAudioFormat::SignedInt:
+            type = "s";
+            break;
+        case QAudioFormat::UnSignedInt:
+            type = "u";
+            break;
+        case QAudioFormat::Float:
+            type = "f";
+            break;
+        default:
+            type = "";
+    }
+
+    QString endian = inputAudioFormat.byteOrder() == QAudioFormat::BigEndian ? "be" : "le";
+
+    return QString("%1Hz %2ch %3%4%5 %6")
+            .arg(inputAudioFormat.sampleRate())
+            .arg(inputAudioFormat.channelCount())
+            .arg(type)
+            .arg(inputAudioFormat.sampleSize())
+            .arg(endian)
+            .arg(inputAudioFormat.codec());
 }

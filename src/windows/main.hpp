@@ -73,8 +73,6 @@ namespace audioreceiver::windows {
         QLabel *statusBarVersionLabel;
         QLabel *statusBarAudioInputDevice;
         QLabel *statusBarAudioInputFormat;
-        QLabel *statusBarAudioOutputDevice;
-        QLabel *statusBarAudioOutputFormat;
 
         QTimer *clockTimer;
 
@@ -86,6 +84,8 @@ namespace audioreceiver::windows {
         void signalConnect();
 
         void initUi();
+
+        static QString prepareAudioFormatString(const QAudioFormat &inputAudioFormat);
 
     private slots:
 

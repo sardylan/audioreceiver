@@ -14,13 +14,13 @@
             <string>Audio Receiver</string>
         </property>
         <widget class="QWidget" name="centralWidget">
-            <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,1">
-                <item row="0" column="0" colspan="2">
+            <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,1,0">
+                <item row="0" column="0" colspan="3">
                     <widget class="QGroupBox" name="settingsGroupBox">
                         <property name="title">
                             <string>Settings</string>
                         </property>
-                        <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0" columnstretch="0,1,0">
+                        <layout class="QGridLayout" name="settingsGridLayout" rowstretch="0,0" columnstretch="0,1,0">
                             <item row="0" column="0">
                                 <widget class="QLabel" name="gainLabel">
                                     <property name="text">
@@ -76,11 +76,38 @@
                         </property>
                     </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="1" column="1" colspan="2">
                     <widget class="QStackedWidget" name="vuMeterStackedWidget"/>
                 </item>
-                <item row="2" column="0" colspan="2">
+                <item row="2" column="0" colspan="3">
                     <widget class="QStackedWidget" name="waterfallStackedWidget"/>
+                </item>
+                <item row="3" column="0">
+                    <widget class="QLabel" name="audioInputBufferLabel">
+                        <property name="text">
+                            <string>Input Audio Buffer</string>
+                        </property>
+                    </widget>
+                </item>
+                <item row="3" column="1">
+                    <widget class="QProgressBar" name="audioInputBufferProgressBar">
+                        <property name="minimum">
+                            <number>0</number>
+                        </property>
+                        <property name="maximum">
+                            <number>100</number>
+                        </property>
+                        <property name="value">
+                            <number>0</number>
+                        </property>
+                    </widget>
+                </item>
+                <item row="3" column="2">
+                    <widget class="QLabel" name="audioInputBufferValue">
+                        <property name="text">
+                            <string>TextLabel</string>
+                        </property>
+                    </widget>
                 </item>
             </layout>
         </widget>
