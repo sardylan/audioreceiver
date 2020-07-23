@@ -23,6 +23,9 @@
 #include <QtCore/QtDebug>
 #include <QtCore/QList>
 #include <QtCore/QDateTime>
+#include <QtCore/QEvent>
+
+#include <QtGui/QMouseEvent>
 
 #include <QtWidgets/QOpenGLWidget>
 
@@ -61,6 +64,12 @@ namespace audioreceiver::widgets {
 
         void paintGL() override;
 
+        void mouseMoveEvent(QMouseEvent *event) override;
+
+        void enterEvent(QEvent *event) override;
+
+        void leaveEvent(QEvent *event) override;
+
     private:
 
         int width;
@@ -72,7 +81,14 @@ namespace audioreceiver::widgets {
         bool bfoEnabled;
         unsigned int bfoFrequency;
 
+        int mousePosX;
+        bool showMousePos;
+
         void cleanDataList();
+
+    signals:
+
+        void newClickFrequency(unsigned int frequency);
 
     };
 

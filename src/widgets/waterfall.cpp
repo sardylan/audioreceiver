@@ -34,6 +34,9 @@ Waterfall::Waterfall(QWidget *parent) {
     frequency = 0;
     bfoEnabled = false;
     bfoFrequency = 0;
+
+    mousePosX = 0;
+    showMousePos = false;
 }
 
 Waterfall::~Waterfall() = default;
@@ -101,46 +104,6 @@ void Waterfall::paintGL() {
         glEnd();
     }
 
-//    unsigned int interval = 0;
-//    unsigned int intervalBig = 0;
-//
-//    if (maxFrequency == 8000) {
-//        interval = 500;
-//        intervalBig = 1000;
-//    } else if (maxFrequency == 11025) {
-//        interval = 500;
-//        intervalBig = 1000;
-//    } else if (maxFrequency == 22050) {
-//        interval = 1000;
-//        intervalBig = 2000;
-//    } else if (maxFrequency == 44100) {
-//        interval = 2000;
-//        intervalBig = 4000;
-//    } else if (maxFrequency == 48000) {
-//        interval = 2000;
-//        intervalBig = 4000;
-//    } else if (maxFrequency == 96000) {
-//        interval = 4000;
-//        intervalBig = 8000;
-//    }
-//
-//    if (interval > 0) {
-//        for (int iterX = 0; iterX < maxFrequency; iterX += interval) {
-//            glBegin(GL_LINES);
-//
-//            if (iterX % intervalBig == 0)
-//                glColor4ub(64, 64, 64, 128);
-//            else
-//                glColor4ub(32, 32, 32, 128);
-//
-//            float x = (float) iterX / maxFrequency;
-//            glVertex2f(x, 0);
-//            glVertex2f(x, height);
-//
-//            glEnd();
-//        }
-//    }
-
     if (bfoEnabled && bfoFrequency >= 0 && bfoFrequency <= frequency) {
         qreal x = (qreal) bfoFrequency / frequency;
         glBegin(GL_LINES);
@@ -150,14 +113,34 @@ void Waterfall::paintGL() {
         glEnd();
     }
 
-//    if (showMousePos) {
-//        float x = (float) mousePosX / width;
-//        glBegin(GL_LINES);
-//        glColor4ub(255, 255, 255, 64);
-//        glVertex2f(x, 0);
-//        glVertex2f(x, height);
-//        glEnd();
-//    }
+    if (bfoEnabled && showMousePos) {
+        qreal x = (qreal) mousePosX / width;
+
+        glBegin(GL_LINES);
+        glColor4ub(128, 128, 128, 64);
+        glVertex2f(x, 0);
+        glVertex2f(x, height);
+        glEnd();
+    }
+}
+
+void Waterfall::mouseMoveEvent(QMouseEvent *event) {
+    mousePosX = event->pos().x();
+
+    if (event->button() == Qt::LeftButton) {
+        auto mouseFrequency = (unsigned int) (((double) mousePosX / width) * frequency);
+        QMetaObject::invokeMethod(this, "newClickFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, mouseFrequency));
+    }
+}
+
+void Waterfall::enterEvent(QEvent *event) {
+    if (event->type() == QEvent::Enter)
+        showMousePos = true;
+}
+
+void Waterfall::leaveEvent(QEvent *event) {
+    if (event->type() == QEvent::Leave)
+        showMousePos = false;
 }
 
 void Waterfall::addData(const QList<qreal> &values) {

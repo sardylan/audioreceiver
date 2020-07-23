@@ -112,15 +112,6 @@ void Main::updateWaterfall(const QList<qreal> &values) {
     QMetaObject::invokeMethod(waterfall, "addData", Qt::QueuedConnection, Q_ARG(const QList<qreal>, values));
 }
 
-void Main::updateBFOEnabled() {
-    bool status = ui->bfoEnableCheckBox->isChecked();
-
-    waterfall->setBfoEnabled(status);
-
-    ui->bfoFrequencySlider->setEnabled(status);
-    ui->bfoFrequencyValue->setEnabled(status);
-}
-
 void Main::updateGainValue() {
     int value = ui->gainSlider->value();
     qreal gain = (qreal) value / AUDIORECEIVER_AUDIO_GAIN_RESOLUTION;
@@ -132,8 +123,16 @@ void Main::updateGainValue() {
     QMetaObject::invokeMethod(this, "newGainValue", Qt::QueuedConnection, Q_ARG(qreal, gain));
 }
 
-void Main::updateBFOValue() {
-    int value = ui->bfoFrequencySlider->value();
+void Main::updateBFOEnabled() {
+    bool status = ui->bfoEnableCheckBox->isChecked();
+
+    waterfall->setBfoEnabled(status);
+
+    ui->bfoFrequencySlider->setEnabled(status);
+    ui->bfoFrequencyValue->setEnabled(status);
+}
+
+void Main::updateBFOValue(int value) {
     ui->bfoFrequencyValue->setText(QString("%1 Hz").arg(value));
     waterfall->setBfoFrequency(value);
     QMetaObject::invokeMethod(this, "newBFOFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, value));
@@ -151,13 +150,15 @@ void Main::signalConnect() {
 
     connect(ui->gainSlider, &QSlider::valueChanged, this, &Main::updateGainValue);
     connect(ui->bfoFrequencySlider, &QSlider::valueChanged, this, &Main::updateBFOValue);
+
+    connect(waterfall, &widgets::Waterfall::newClickFrequency, this, &Main::updateBFOValue);
 }
 
 void Main::initUi() {
     ui->bfoFrequencySlider->setMinimum(0);
     ui->bfoFrequencySlider->setMaximum(1);
     ui->bfoFrequencySlider->setValue(0);
-    updateBFOValue();
+    updateBFOValue(ui->bfoFrequencySlider->value());
 
     ui->bfoEnableCheckBox->setChecked(false);
     updateBFOEnabled();

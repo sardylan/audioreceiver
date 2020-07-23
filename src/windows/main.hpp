@@ -98,11 +98,11 @@ namespace audioreceiver::windows {
 
         void updateClock();
 
-        void updateBFOEnabled();
-
         void updateGainValue();
 
-        void updateBFOValue();
+        void updateBFOEnabled();
+
+        void updateBFOValue(int value);
 
     signals:
 
