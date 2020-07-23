@@ -159,6 +159,7 @@ void AudioReceiver::signalConnect() {
     });
     connect(mainWindow, &windows::Main::bfoToggle, worker, &Worker::setBFOStatus, Qt::QueuedConnection);
     connect(mainWindow, &windows::Main::newBFOFrequency, worker, &Worker::setBFOFrequency, Qt::QueuedConnection);
+    connect(mainWindow, &windows::Main::newGainValue, worker, &Worker::setGain, Qt::QueuedConnection);
 
     connect(worker, &Worker::newStatus, this, &AudioReceiver::handleNewWorkerStatus);
 

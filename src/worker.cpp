@@ -36,6 +36,8 @@ Worker::Worker(QObject *parent) : Service(parent) {
     fft = nullptr;
     fir = nullptr;
 
+    gain = 1;
+
     connect(audioSource, &audio::Source::newFrame, this, &Worker::newFrame);
     connect(audioSource, &audio::Source::bufferSize, this, &Worker::bufferSize, Qt::QueuedConnection);
 }
@@ -80,6 +82,10 @@ void Worker::setOutputAudioFormat(const QAudioFormat &newValue) {
     Worker::outputAudioFormat = newValue;
 }
 
+qreal Worker::getGain() const {
+    return gain;
+}
+
 void Worker::start() {
     qInfo() << "Starting Audio Worker";
 
@@ -119,9 +125,12 @@ void Worker::stop() {
 }
 
 void Worker::newFrame(const model::Frame &frame) {
-    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::computeLog, frame.getValues());
-    QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, frame.getValues());
-    QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rmsLog, frame.getValues());
+    QFuture<QList<qreal>> gainFuture = QtConcurrent::run(dsp::Utility::gain, frame.getValues(), gain);
+    QList<qreal> values = gainFuture.result();
+
+    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::computeLog, values);
+    QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, values);
+    QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rmsLog, values);
 
     QList<qreal> ifValues = bfoFuture.result();
     QFuture<QList<qreal>> firFuture = QtConcurrent::run(fir, &dsp::FIR::compute, ifValues);
@@ -145,6 +154,10 @@ void Worker::newFrame(const model::Frame &frame) {
 //            << "Frame:" << frame
 //            << "-"
 //            << "RMS:" << rms;
+}
+
+void Worker::setGain(qreal newValue) {
+    Worker::gain = newValue;
 }
 
 void Worker::setBFOStatus(bool newStatus) {

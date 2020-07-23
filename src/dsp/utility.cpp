@@ -168,6 +168,17 @@ QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat
     return data;
 }
 
+QList<qreal> Utility::gain(const QList<qreal> &values, const qreal &gain) {
+    if (gain == 1)
+        return values;
+
+    QList<qreal> output;
+    for (qreal v: values)
+        output.append(v * gain);
+
+    return output;
+}
+
 qreal Utility::rms(const QList<qreal> &values) {
 //    qDebug() << "RMS start";
 

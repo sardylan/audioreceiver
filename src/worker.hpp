@@ -61,11 +61,15 @@ namespace audioreceiver {
 
         void setOutputAudioFormat(const QAudioFormat &outputAudioFormat);
 
+        [[nodiscard]] qreal getGain() const;
+
     public slots:
 
         void start() override;
 
         void stop() override;
+
+        void setGain(qreal newValue);
 
         void setBFOStatus(bool newStatus);
 
@@ -85,6 +89,8 @@ namespace audioreceiver {
 
         QAudioDeviceInfo outputAudioDeviceInfo;
         QAudioFormat outputAudioFormat;
+
+        qreal gain;
 
     private slots:
 

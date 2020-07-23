@@ -38,6 +38,9 @@
 
 #define AUDIORECEIVER_AUDIO_BUFFER_SIZE_MAX 32768
 
+#define AUDIORECEIVER_AUDIO_GAIN_MAX_DB 30
+#define AUDIORECEIVER_AUDIO_GAIN_RESOLUTION 100
+
 namespace Ui {
     class Main;
 }
@@ -97,6 +100,8 @@ namespace audioreceiver::windows {
 
         void updateBFOEnabled();
 
+        void updateGainValue();
+
         void updateBFOValue();
 
     signals:
@@ -109,7 +114,7 @@ namespace audioreceiver::windows {
 
         void newBFOFrequency(unsigned int value);
 
-        void newGainValue(qreal value);
+        void newGainValue(qreal gain);
 
     };
 
