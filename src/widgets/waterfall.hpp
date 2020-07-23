@@ -39,9 +39,7 @@ namespace audioreceiver::widgets {
 
         [[nodiscard]] unsigned int getFrequency() const;
 
-
         [[nodiscard]] bool isBfoEnabled() const;
-
 
         [[nodiscard]] unsigned int getBfoFrequency() const;
 

@@ -31,7 +31,7 @@
 
 #include "../model/frame.hpp"
 
-#define AUDIO_BUFFER_INPUT 65536
+#define AUDIO_BUFFER_INPUT 32768
 
 using namespace audioreceiver;
 
@@ -85,6 +85,8 @@ namespace audioreceiver::audio {
 
         model::Frame prepareFrame(const QList<qreal> &values);
 
+        void emitBufferSize();
+
     private slots:
 
         void readAudioBytes();
@@ -92,6 +94,8 @@ namespace audioreceiver::audio {
     signals:
 
         void newFrame(const audioreceiver::model::Frame &frame);
+
+        void bufferSize(const int &size);
 
     };
 

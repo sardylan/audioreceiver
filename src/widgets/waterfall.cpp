@@ -25,14 +25,13 @@
 
 using namespace audioreceiver::widgets;
 
-#define WIDGETS_WATERFALL_COLORS 1024
-
 Waterfall::Waterfall(QWidget *parent) {
     setMouseTracking(true);
 
     width = 0;
     height = 0;
 
+    frequency = 0;
     bfoEnabled = false;
     bfoFrequency = 0;
 }
@@ -90,7 +89,7 @@ void Waterfall::paintGL() {
         glVertex2i(0, y);
 
         for (int listX = 0; listX < lineList.size(); listX++) {
-            qreal value = lineList.at(listX);
+            qreal value = lineList.at(listX) * WIDGETS_WATERFALL_COLORS;
             int colorValue = (int) value;
             QRgba64 color = waterfallColor[colorValue];
             glColor4ub(color.red8(), color.green8(), color.blue8(), color.alpha8());

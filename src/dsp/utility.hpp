@@ -34,7 +34,9 @@ namespace audioreceiver::dsp {
 
         static QByteArray valuesToBytes(const QList<qreal> &values, const QAudioFormat &audioFormat);
 
-        static qreal rms(const QList<qreal> &data);
+        static qreal rms(const QList<qreal> &values);
+
+        static qreal rmsLog(const QList<qreal> &values);
 
         static qreal logScale(qreal value);
 

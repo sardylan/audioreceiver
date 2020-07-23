@@ -168,23 +168,27 @@ QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat
     return data;
 }
 
-qreal Utility::rms(const QList<qreal> &data) {
+qreal Utility::rms(const QList<qreal> &values) {
 //    qDebug() << "RMS start";
 
     qreal sum = 0;
 
-    for (qreal item: data)
+    for (qreal item: values)
         sum += item * item;
 
     if (sum == 0)
         return 0;
 
-    qreal mean = sum / data.length();
+    qreal mean = sum / values.length();
     qreal root = qSqrt(mean);
 
 //    qDebug() << "RMS end";
 
     return root;
+}
+
+qreal Utility::rmsLog(const QList<qreal> &values) {
+    return logScale(rms(values));
 }
 
 qreal Utility::logScale(qreal value) {

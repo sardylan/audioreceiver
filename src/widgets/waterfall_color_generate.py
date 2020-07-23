@@ -40,7 +40,9 @@ FILE_HEADER = """
 
 #include <QtGui/QRgba64>
 
-static const QRgba64 waterfallColor[1024] = {
+#define WIDGETS_WATERFALL_COLORS 1024
+
+static const QRgba64 waterfallColor[WIDGETS_WATERFALL_COLORS] = {
 """
 
 FILE_FOOTER = """

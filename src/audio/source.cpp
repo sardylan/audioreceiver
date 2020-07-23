@@ -35,10 +35,12 @@ Source::Source(const int &frameSize, QObject *parent) : Service(parent), frameSi
     frames = 0;
     bytes = 0;
 
-    buffer = nullptr;
+    buffer = new QQueue<char>();
 }
 
 Source::~Source() {
+    delete buffer;
+
     delete audioInput;
     delete audioIODevice;
 }
@@ -76,9 +78,10 @@ void Source::start() {
     qDebug() << "Source Audio format:" << audioFormat;
 
     audioInput = new QAudioInput(deviceInfo, audioFormat);
-    audioInput->setBufferSize(AUDIO_BUFFER_INPUT);
+//    audioInput->setBufferSize(AUDIO_BUFFER_INPUT);
 
-    buffer = new QQueue<char>();
+    buffer->clear();
+    emitBufferSize();
 
     audioIODevice = audioInput->start();
     connect(audioIODevice, &QIODevice::readyRead, this, &Source::readAudioBytes);
@@ -90,7 +93,8 @@ void Source::stop() {
 
     audioInput->deleteLater();
 
-    delete buffer;
+    buffer->clear();
+    emitBufferSize();
 }
 
 void Source::readAudioBytes() {
@@ -106,6 +110,8 @@ void Source::readAudioBytes() {
 
     for (char c: rawData)
         buffer->append(c);
+
+    emitBufferSize();
 
     int bytesToRead = audioFormat.bytesForFrames(frameSize);
 
@@ -125,6 +131,10 @@ void Source::readAudioBytes() {
                 Q_ARG(const audioreceiver::model::Frame, frame)
         );
     }
+}
+
+void Source::emitBufferSize() {
+    QMetaObject::invokeMethod(this, "bufferSize", Qt::QueuedConnection, Q_ARG(const int, buffer->size()));
 }
 
 model::Frame Source::prepareFrame(const QList<qreal> &values) {

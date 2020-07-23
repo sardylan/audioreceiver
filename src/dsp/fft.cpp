@@ -67,7 +67,7 @@ QList<qreal> FFT::computeFFT(const QList<qreal> &data, bool logScale) {
         qreal magnitude = qSqrt((re * re) + (im * im));
 
         if (logScale)
-            magnitude = Utility::logScale(magnitude) * size;
+            magnitude = Utility::logScale(magnitude);
 
         fft.append(magnitude);
     }
