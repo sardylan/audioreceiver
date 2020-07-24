@@ -23,6 +23,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QList>
 #include <QtCore/QFuture>
+
 #include <QtConcurrent/QtConcurrentRun>
 
 #include <QtWidgets/QApplication>

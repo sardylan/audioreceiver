@@ -16,7 +16,8 @@ add_executable(audioreceiver
         audioreceiver.cpp audioreceiver.hpp
         worker.cpp worker.hpp
         config.cpp config.hpp
-        default.hpp)
+        default.hpp
+        audioreceiver.rc)
 
 target_link_libraries(audioreceiver
         Qt5::Core
