@@ -18,14 +18,14 @@ jobs:
       - name: Prepare
         run: sudo apt install qt5-default mesa-common-dev
       - name: Configure
-        working-directory: build
-        run: cmake ..
+        working-directory: ${{ runner.workspace }}/build
+        run: cmake ${{ runner.workspace }}
       - name: Make
-        working-directory: build
+        working-directory: ${{ runner.workspace }}/build
         run: make
       - name: Make check
-        working-directory: build
+        working-directory: ${{ runner.workspace }}/build
         run: make check
       - name: Make distcheck
-        working-directory: build
+        working-directory: ${{ runner.workspace }}/build
         run: make distcheck
