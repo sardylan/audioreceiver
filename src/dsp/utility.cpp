@@ -60,6 +60,8 @@ QList<qreal> Utility::bytesToValues(const QByteArray &data, const QAudioFormat &
                             value = qFromBigEndian<quint16>(sampleData);
                         else if (sampleSize == 4)
                             value = qFromBigEndian<quint32>(sampleData);
+                        else if (sampleSize == 8)
+                            value = qFromBigEndian<quint64>(sampleData);
                         break;
                     case QAudioFormat::SignedInt:
                         if (sampleSize == 1)
@@ -68,6 +70,8 @@ QList<qreal> Utility::bytesToValues(const QByteArray &data, const QAudioFormat &
                             value = qFromBigEndian<qint16>(sampleData);
                         else if (sampleSize == 4)
                             value = qFromBigEndian<qint32>(sampleData);
+                        else if (sampleSize == 8)
+                            value = qFromBigEndian<qint64>(sampleData);
                         break;
                     case QAudioFormat::Float:
                         value = qFromBigEndian<qreal>(sampleData);
@@ -84,6 +88,8 @@ QList<qreal> Utility::bytesToValues(const QByteArray &data, const QAudioFormat &
                             value = qFromLittleEndian<quint16>(sampleData);
                         else if (sampleSize == 4)
                             value = qFromLittleEndian<quint32>(sampleData);
+                        else if (sampleSize == 8)
+                            value = qFromLittleEndian<quint64>(sampleData);
                         break;
                     case QAudioFormat::SignedInt:
                         if (sampleSize == 1)
@@ -92,6 +98,8 @@ QList<qreal> Utility::bytesToValues(const QByteArray &data, const QAudioFormat &
                             value = qFromLittleEndian<qint16>(sampleData);
                         else if (sampleSize == 4)
                             value = qFromLittleEndian<qint32>(sampleData);
+                        else if (sampleSize == 8)
+                            value = qFromLittleEndian<qint64>(sampleData);
                         break;
                     case QAudioFormat::Float:
                         value = qFromLittleEndian<qreal>(sampleData);
@@ -145,6 +153,8 @@ QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat
                         dataStream << (quint16) singleValue;
                     else if (sampleSize == 4)
                         dataStream << (quint32) singleValue;
+                    else if (sampleSize == 8)
+                        dataStream << (quint64) singleValue;
                     break;
                 case QAudioFormat::SignedInt:
                     singleValue = value * max;
@@ -155,6 +165,8 @@ QByteArray Utility::valuesToBytes(const QList<qreal> &values, const QAudioFormat
                         dataStream << (qint16) singleValue;
                     else if (sampleSize == 4)
                         dataStream << (qint32) singleValue;
+                    else if (sampleSize == 8)
+                        dataStream << (qint64) singleValue;
                     break;
                 case QAudioFormat::Float:
                     dataStream << value;

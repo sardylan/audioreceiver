@@ -16,6 +16,8 @@
  *
  */
 
+#include <QtCore/QDebug>
+
 #include "main.hpp"
 #include "ui_main.h"
 

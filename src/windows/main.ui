@@ -177,6 +177,9 @@
             <property name="allowedAreas">
                 <set>Qt::TopToolBarArea</set>
             </property>
+            <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
             <property name="floatable">
                 <bool>false</bool>
             </property>
@@ -196,6 +199,11 @@
             </property>
         </action>
         <action name="actionConfig">
+            <property name="icon">
+                <iconset resource="resources.qrc">
+                    <normaloff>:/action/application/settings</normaloff>:/action/application/settings
+                </iconset>
+            </property>
             <property name="text">
                 <string>&amp;Config</string>
             </property>
@@ -204,11 +212,18 @@
             <property name="checkable">
                 <bool>true</bool>
             </property>
+            <property name="icon">
+                <iconset resource="resources.qrc">
+                    <normaloff>:/action/application/play</normaloff>:/action/application/play
+                </iconset>
+            </property>
             <property name="text">
                 <string>&amp;Run</string>
             </property>
         </action>
     </widget>
-    <resources/>
+    <resources>
+        <include location="resources.qrc"/>
+    </resources>
     <connections/>
 </ui>
