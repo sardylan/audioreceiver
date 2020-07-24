@@ -121,9 +121,7 @@ void Main::updateGainValue() {
     int value = ui->gainSlider->value();
     qreal gain = (qreal) value / AUDIORECEIVER_AUDIO_GAIN_RESOLUTION;
 
-    QString text;
-    text.sprintf("%.02f", gain);
-    ui->gainValue->setText(text);
+    ui->gainValue->setText(QString::asprintf("%.02f", gain));
 
     QMetaObject::invokeMethod(this, "newGainValue", Qt::QueuedConnection, Q_ARG(qreal, gain));
 }

@@ -137,16 +137,16 @@ AudioReceiver::~AudioReceiver() {
 }
 
 void AudioReceiver::entryPoint() {
-    if (!qSharedMemory->create(1, QSharedMemory::ReadWrite)) {
-        QMessageBox messageBox;
-        messageBox.setModal(true);
-        messageBox.setWindowTitle("Audio Receiver already running");
-        messageBox.setText("There is another instance of AudioReceiver running.");
-        messageBox.exec();
-
-        QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
-        return;
-    }
+//    if (!qSharedMemory->create(1, QSharedMemory::ReadWrite)) {
+//        QMessageBox messageBox;
+//        messageBox.setModal(true);
+//        messageBox.setWindowTitle("Audio Receiver already running");
+//        messageBox.setText("There is another instance of AudioReceiver running.");
+//        messageBox.exec();
+//
+//        QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
+//        return;
+//    }
 
     start();
 }
