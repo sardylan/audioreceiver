@@ -16,16 +16,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Prepare
-        run: sudo apt install qt5-default mesa-common-dev
+        run: sudo apt install cmake qt5-default mesa-common-dev
       - name: Configure
-        working-directory: ${{ runner.workspace }}/build
-        run: cmake ${{ runner.workspace }}
+        working-directory: build
+        run: cmake ..
       - name: Make
-        working-directory: ${{ runner.workspace }}/build
+        working-directory: build
         run: make
       - name: Make check
-        working-directory: ${{ runner.workspace }}/build
+        working-directory: build
         run: make check
       - name: Make distcheck
-        working-directory: ${{ runner.workspace }}/build
+        working-directory: build
         run: make distcheck
