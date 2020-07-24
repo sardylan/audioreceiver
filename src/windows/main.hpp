@@ -31,6 +31,8 @@
 #include <QtMultimedia/QAudioDeviceInfo>
 #include <QtMultimedia/QAudioFormat>
 
+#include <QtSvg/QtSvg>
+
 #include "../config.hpp"
 
 #include "../widgets/vumeter.hpp"

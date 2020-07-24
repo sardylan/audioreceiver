@@ -1,5 +1,5 @@
 find_package(Qt5 REQUIRED
-        COMPONENTS Core Gui Widgets Svg)
+        COMPONENTS Core Gui Widgets Xml Svg)
 
 add_library(windows
         main.cpp main.hpp main.ui
@@ -10,6 +10,7 @@ target_link_libraries(windows
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
+        Qt5::Xml
         Qt5::Svg
         widgets)
 
