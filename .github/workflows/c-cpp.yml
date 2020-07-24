@@ -1,23 +1,31 @@
-name: C/C++ CI
-
+name: Build
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+#        os: [windows-latest, macOS-latest, ubuntu-latest, ubuntu-16.04]
+        os: [ubuntu-latest]
+        version: ["5.15.0"]
+    runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: cmake
-      run: mkdir build && cd build && cmake ..
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Prepare
+        run: sudo apt install qt5-default mesa-common-dev
+      - name: Configure
+        working-directory: build
+        run: cmake ..
+      - name: Make
+        working-directory: build
+        run: make
+      - name: Make check
+        working-directory: build
+        run: make check
+      - name: Make distcheck
+        working-directory: build
+        run: make distcheck
