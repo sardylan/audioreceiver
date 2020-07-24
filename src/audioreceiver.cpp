@@ -19,12 +19,14 @@
 #include <csignal>
 
 #include <QtCore/QtGlobal>
-#include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
+#include <QtCore/QCoreApplication>
 #include <QtCore/QList>
 #include <QtCore/QFuture>
 #include <QtConcurrent/QtConcurrentRun>
+
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
 
 #include "audioreceiver.hpp"
 #include "version.hpp"
@@ -69,8 +71,6 @@ BOOL WINAPI ctrlHandler(DWORD fdwCtrlType) {
 
 #endif
 
-#define AUDIORECEIVER_FRAME_SIZE 1024
-
 int main(int argc, char **argv) {
     qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
 
@@ -97,8 +97,7 @@ int main(int argc, char **argv) {
 
     audioReceiver = new AudioReceiver();
     QApplication::connect(audioReceiver, &AudioReceiver::finished, []() { QCoreApplication::exit(); });
-
-    audioReceiver->start();
+    audioReceiver->entryPoint();
 
 #ifdef Q_OS_LINUX
     signal(SIGINT, signalHandler);
@@ -113,7 +112,11 @@ int main(int argc, char **argv) {
     return QApplication::exec();
 }
 
+#define AUDIORECEIVER_SHM_KEY_SINGLE_INSTANCE "audioReceiver-singleInstance"
+
 AudioReceiver::AudioReceiver(QObject *parent) : QObject(parent) {
+    qSharedMemory = new QSharedMemory(AUDIORECEIVER_SHM_KEY_SINGLE_INSTANCE, this);
+
     config = new Config();
 
     worker = new Worker();
@@ -129,6 +132,23 @@ AudioReceiver::~AudioReceiver() {
     delete configWindow;
 
     delete worker;
+
+    delete qSharedMemory;
+}
+
+void AudioReceiver::entryPoint() {
+    if (!qSharedMemory->create(1, QSharedMemory::ReadWrite)) {
+        QMessageBox messageBox;
+        messageBox.setModal(true);
+        messageBox.setWindowTitle("Audio Receiver already running");
+        messageBox.setText("There is another instance of AudioReceiver running.");
+        messageBox.exec();
+
+        QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
+        return;
+    }
+
+    start();
 }
 
 void AudioReceiver::start() {

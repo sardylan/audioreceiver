@@ -36,6 +36,7 @@ BOOL WINAPI ctrlHandler(DWORD ctrlHandler);
 #endif
 
 #include <QtCore/QObject>
+#include <QtCore/QSharedMemory>
 
 #include "config.hpp"
 #include "worker.hpp"
@@ -63,11 +64,15 @@ namespace audioreceiver {
 
         ~AudioReceiver() override;
 
+        void entryPoint();
+
         void start();
 
         void stop();
 
     private:
+
+        QSharedMemory *qSharedMemory;
 
         Config *config;
 
