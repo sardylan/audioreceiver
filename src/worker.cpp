@@ -26,20 +26,22 @@
 
 using namespace audioreceiver;
 
-#define AUDIORECEIVER_FRAME_SIZE 1024
-
 Worker::Worker(QObject *parent) : Service(parent) {
-    audioSource = new audio::Source(AUDIORECEIVER_FRAME_SIZE);
-    audioDestination = new audio::Destination();
+    audioSource = nullptr;
+    audioDestination = nullptr;
 
     bfo = nullptr;
     fft = nullptr;
     fir = nullptr;
 
-    gain = 1;
+    audioChunkSize = 1024;
+    fftSampleSize = 1024;
 
-    connect(audioSource, &audio::Source::newFrame, this, &Worker::newFrame);
-    connect(audioSource, &audio::Source::bufferSize, this, &Worker::bufferSize, Qt::QueuedConnection);
+    gain = 1;
+    bfoStatus = false;
+    bfoFrequency = 0;
+
+    fftBuffer.clear();
 }
 
 Worker::~Worker() {
@@ -48,6 +50,7 @@ Worker::~Worker() {
 
     delete bfo;
     delete fft;
+    delete fir;
 }
 
 const QAudioDeviceInfo &Worker::getInputAudioDeviceInfo() const {
@@ -82,24 +85,54 @@ void Worker::setOutputAudioFormat(const QAudioFormat &newValue) {
     Worker::outputAudioFormat = newValue;
 }
 
+int Worker::getAudioChunkSize() const {
+    return audioChunkSize;
+}
+
+void Worker::setAudioChunkSize(int newValue) {
+    Worker::audioChunkSize = newValue;
+}
+
+int Worker::getFftSampleSize() const {
+    return fftSampleSize;
+}
+
+void Worker::setFftSampleSize(int newValue) {
+    Worker::fftSampleSize = newValue;
+}
+
+
 qreal Worker::getGain() const {
     return gain;
+}
+
+bool Worker::isBfoStatus() const {
+    return bfoStatus;
+}
+
+unsigned int Worker::getBfoFrequency() const {
+    return bfoFrequency;
 }
 
 void Worker::start() {
     qInfo() << "Starting Audio Worker";
 
+    audioSource = new audio::Source(audioChunkSize);
     audioSource->setDeviceInfo(inputAudioDeviceInfo);
     audioSource->setAudioFormat(inputAudioFormat);
 
+    connect(audioSource, &audio::Source::newFrame, this, &Worker::newFrame);
+    connect(audioSource, &audio::Source::bufferSize, this, &Worker::bufferSize, Qt::QueuedConnection);
+
+    audioDestination = new audio::Destination();
     audioDestination->setDeviceInfo(outputAudioDeviceInfo);
     audioDestination->setAudioFormat(outputAudioFormat);
 
-    bfo = new dsp::BFO(inputAudioFormat.sampleRate(), this);
-    bfo->setEnabled(true);
-    bfo->setFrequency(1);
+    bfo = new dsp::BFO(inputAudioFormat.sampleRate());
+    bfo->setEnabled(bfoStatus);
+    bfo->setFrequency(bfoFrequency);
 
-    fft = new dsp::FFT(AUDIORECEIVER_FRAME_SIZE);
+    fft = new dsp::FFT(fftSampleSize);
 
     QList<qreal> kernel;
     fir = new dsp::FIR(kernel);
@@ -121,6 +154,9 @@ void Worker::stop() {
     fft->deleteLater();
     fir->deleteLater();
 
+    audioSource->deleteLater();
+    audioDestination->deleteLater();
+
     QMetaObject::invokeMethod(this, "newStatus", Qt::QueuedConnection, Q_ARG(bool, false));
 }
 
@@ -128,7 +164,22 @@ void Worker::newFrame(const model::Frame &frame) {
     QFuture<QList<qreal>> gainFuture = QtConcurrent::run(dsp::Utility::gain, frame.getValues(), gain);
     QList<qreal> values = gainFuture.result();
 
-    QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::computeLog, values);
+    fftBuffer.append(values);
+
+    QList<QFuture<QList<qreal>>> fftFutureList;
+
+    while (fftBuffer.size() >= fftSampleSize) {
+        QList<qreal> fftSample;
+
+        while (fftSample.size() < fftSampleSize && !fftBuffer.empty())
+            fftSample.append(fftBuffer.dequeue());
+
+        if (fftSample.size() == fftSampleSize) {
+            QFuture<QList<qreal>> fftFuture = QtConcurrent::run(fft, &dsp::FFT::computeLog, fftSample);
+            fftFutureList.append(fftFuture);
+        }
+    }
+
     QFuture<QList<qreal>> bfoFuture = QtConcurrent::run(bfo, &dsp::BFO::compute, values);
     QFuture<qreal> rmsFuture = QtConcurrent::run(dsp::Utility::rmsLog, values);
 
@@ -137,10 +188,13 @@ void Worker::newFrame(const model::Frame &frame) {
 
     qreal rms = rmsFuture.result();
     QList<qreal> newValues = firFuture.result();
-    QList<qreal> fftValues = fftFuture.result();
+
+    for (const QFuture<QList<qreal>> &fftFuture: fftFutureList) {
+        QList<qreal> fftValues = fftFuture.result();
+        QMetaObject::invokeMethod(this, "newFFT", Qt::QueuedConnection, Q_ARG(const QList<qreal>, fftValues));
+    }
 
     QMetaObject::invokeMethod(this, "newRMS", Qt::QueuedConnection, Q_ARG(const qreal, rms));
-    QMetaObject::invokeMethod(this, "newFFT", Qt::QueuedConnection, Q_ARG(const QList<qreal>, fftValues));
     QMetaObject::invokeMethod(this, "newValues", Qt::QueuedConnection, Q_ARG(const QList<qreal>, newValues));
 
     QMetaObject::invokeMethod(
@@ -149,21 +203,18 @@ void Worker::newFrame(const model::Frame &frame) {
             Qt::QueuedConnection,
             Q_ARG(const QList<qreal>, newValues)
     );
-
-//    qDebug()
-//            << "Frame:" << frame
-//            << "-"
-//            << "RMS:" << rms;
 }
 
 void Worker::setGain(qreal newValue) {
     Worker::gain = newValue;
 }
 
-void Worker::setBFOStatus(bool newStatus) {
-    QMetaObject::invokeMethod(bfo, "setEnabled", Qt::QueuedConnection, Q_ARG(bool, newStatus));
+void Worker::setBFOStatus(bool newValue) {
+    Worker::bfoStatus = newValue;
+    QMetaObject::invokeMethod(bfo, "setEnabled", Qt::QueuedConnection, Q_ARG(bool, Worker::bfoStatus));
 }
 
-void Worker::setBFOFrequency(unsigned int frequency) {
-    QMetaObject::invokeMethod(bfo, "setFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, frequency));
+void Worker::setBFOFrequency(unsigned int newValue) {
+    Worker::bfoFrequency = newValue;
+    QMetaObject::invokeMethod(bfo, "setFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, Worker::bfoFrequency));
 }

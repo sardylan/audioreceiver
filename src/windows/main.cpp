@@ -33,9 +33,9 @@ Main::Main(audioreceiver::Config *config, QWidget *parent) : QMainWindow(parent)
 
     statusBarClockLabel = new QLabel(this);
     statusBarVersionLabel = new QLabel(this);
-    statusBarAudioInputDevice = new QLabel(this);
-    statusBarAudioInputFormat = new QLabel(this);
-
+    statusBarAudioInputDeviceLabel = new QLabel(this);
+    statusBarAudioInputFormatLabel = new QLabel(this);
+    statusBarDSPSettingsLabel = new QLabel(this);
 
     signalConnect();
     initUi();
@@ -50,18 +50,23 @@ Main::~Main() {
 
     delete statusBarClockLabel;
     delete statusBarVersionLabel;
-    delete statusBarAudioInputDevice;
-    delete statusBarAudioInputFormat;
+    delete statusBarAudioInputDeviceLabel;
+    delete statusBarAudioInputFormatLabel;
+    delete statusBarDSPSettingsLabel;
 
     delete ui;
 }
 
-void Main::updateAudioDevicesParams(const QAudioDeviceInfo &inputAudioDeviceInfo,
-                                    const QAudioFormat &inputAudioFormat,
-                                    const QAudioDeviceInfo &outputAudioDeviceInfo,
-                                    const QAudioFormat &outputAudioFormat) {
-    statusBarAudioInputDevice->setText(inputAudioDeviceInfo.deviceName());
-    statusBarAudioInputFormat->setText(prepareAudioFormatString(inputAudioFormat));
+void Main::updateUiFromConfig(const QAudioDeviceInfo &inputAudioDeviceInfo,
+                              const QAudioFormat &inputAudioFormat,
+                              const QAudioDeviceInfo &outputAudioDeviceInfo,
+                              const QAudioFormat &outputAudioFormat) {
+    statusBarAudioInputDeviceLabel->setText(inputAudioDeviceInfo.deviceName());
+    statusBarAudioInputFormatLabel->setText(prepareAudioFormatString(inputAudioFormat));
+
+    statusBarDSPSettingsLabel->setText(QString("Audio: %1 - FFT: %2")
+                                               .arg(config->getDSPSettingsAudioChunkSize())
+                                               .arg(config->getDSPSettingsFFTSampleSize()));
 
     int sampleFrequency = inputAudioFormat.sampleRate() / 2;
 
@@ -151,6 +156,7 @@ void Main::signalConnect() {
     connect(ui->gainSlider, &QSlider::valueChanged, this, &Main::updateGainValue);
     connect(ui->bfoFrequencySlider, &QSlider::valueChanged, this, &Main::updateBFOValue);
 
+    connect(waterfall, &widgets::Waterfall::newClickFrequency, ui->bfoFrequencySlider, &QSlider::setValue);
     connect(waterfall, &widgets::Waterfall::newClickFrequency, this, &Main::updateBFOValue);
 }
 
@@ -175,10 +181,7 @@ void Main::initUi() {
 }
 
 void Main::initStatusBar() {
-    statusBarVersionLabel->setFrameShape(QFrame::StyledPanel);
-    statusBarVersionLabel->setAlignment(Qt::AlignRight);
-    statusBarVersionLabel->setMinimumWidth(50);
-    statusBarVersionLabel->setStyleSheet("padding-left: 3px; padding-right: 3px;");
+    statusBarWidgetStyle(statusBarVersionLabel);
     statusBarVersionLabel->setText(QString("ver %1").arg(QApplication::applicationVersion()));
     ui->statusBar->addPermanentWidget(statusBarVersionLabel);
 
@@ -186,16 +189,24 @@ void Main::initStatusBar() {
     clockTimer->setSingleShot(false);
     clockTimer->setTimerType(Qt::VeryCoarseTimer);
     clockTimer->start();
-    statusBarClockLabel->setFrameShape(QFrame::StyledPanel);
-    statusBarClockLabel->setAlignment(Qt::AlignCenter);
-    statusBarClockLabel->setMinimumWidth(50);
-    statusBarClockLabel->setStyleSheet("padding-left: 3px; padding-right: 3px;");
+    statusBarWidgetStyle(statusBarClockLabel);
     ui->statusBar->addPermanentWidget(statusBarClockLabel);
 
-    statusBarAudioInputDevice->setStyleSheet("padding-left: 3px; padding-right: 3px;");
-    ui->statusBar->addWidget(statusBarAudioInputDevice);
-    statusBarAudioInputFormat->setStyleSheet("padding-left: 3px; padding-right: 3px;");
-    ui->statusBar->addWidget(statusBarAudioInputFormat);
+    statusBarWidgetStyle(statusBarAudioInputDeviceLabel);
+    ui->statusBar->addWidget(statusBarAudioInputDeviceLabel);
+
+    statusBarWidgetStyle(statusBarAudioInputFormatLabel);
+    ui->statusBar->addWidget(statusBarAudioInputFormatLabel);
+
+    statusBarWidgetStyle(statusBarDSPSettingsLabel);
+    ui->statusBar->addWidget(statusBarDSPSettingsLabel);
+}
+
+void Main::statusBarWidgetStyle(QLabel *label) {
+    label->setFrameShape(QFrame::StyledPanel);
+    label->setAlignment(Qt::AlignRight);
+    label->setMinimumWidth(50);
+    label->setStyleSheet("padding-left: 3px; padding-right: 3px;");
 }
 
 void Main::updateClock() {

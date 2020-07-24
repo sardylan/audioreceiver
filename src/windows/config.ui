@@ -95,8 +95,8 @@
                             <item row="3" column="3">
                                 <widget class="QComboBox" name="audioInputCodecComboBox"/>
                             </item>
-                            <item row="4" column="0">
-                                <spacer name="inputVerticalSpacer">
+                            <item row="4" column="0" colspan="4">
+                                <spacer name="audioInputVerticalSpacer">
                                     <property name="orientation">
                                         <enum>Qt::Vertical</enum>
                                     </property>
@@ -186,8 +186,48 @@
                             <item row="3" column="3">
                                 <widget class="QComboBox" name="audioOutputCodecComboBox"/>
                             </item>
-                            <item row="4" column="0">
-                                <spacer name="outputVerticalSpacer">
+                            <item row="4" column="0" colspan="4">
+                                <spacer name="audioOutputVerticalSpacer">
+                                    <property name="orientation">
+                                        <enum>Qt::Vertical</enum>
+                                    </property>
+                                    <property name="sizeHint" stdset="0">
+                                        <size>
+                                            <width>20</width>
+                                            <height>40</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                            </item>
+                        </layout>
+                    </widget>
+                    <widget class="QWidget" name="dspSettingsTab">
+                        <attribute name="title">
+                            <string>DSP settings</string>
+                        </attribute>
+                        <layout class="QGridLayout" name="dspSettingsGridLayout" rowstretch="0,0,1" columnstretch="0,1">
+                            <item row="0" column="0">
+                                <widget class="QLabel" name="dspSettingsAudioChunkSizeLabel">
+                                    <property name="text">
+                                        <string>Audio Chunk Size</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="0" column="1">
+                                <widget class="QComboBox" name="dspSettingsAudioChunkSizeComboBox"/>
+                            </item>
+                            <item row="1" column="0">
+                                <widget class="QLabel" name="dspSettingsFFTSampleSizeLabel">
+                                    <property name="text">
+                                        <string>FFT Sample Size</string>
+                                    </property>
+                                </widget>
+                            </item>
+                            <item row="1" column="1">
+                                <widget class="QComboBox" name="dspSettingsFFTSampleSizeComboBox"/>
+                            </item>
+                            <item row="2" column="0" colspan="2">
+                                <spacer name="generalVerticalSpacer">
                                     <property name="orientation">
                                         <enum>Qt::Vertical</enum>
                                     </property>

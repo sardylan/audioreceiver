@@ -23,6 +23,21 @@
 #include <QtCore/QString>
 #include <QtMultimedia/QAudioFormat>
 
+#define CONFIG_NAME_AUDIO_INPUT "audioInput"
+#define CONFIG_NAME_AUDIO_OUTPUT "audioOutput"
+#define CONFIG_NAME_DSP_SETTINGS "dspSettings"
+
+#define CONFIG_NAME_AUDIO_DEVICE "device"
+#define CONFIG_NAME_AUDIO_CHANNELS "channels"
+#define CONFIG_NAME_AUDIO_SAMPLE_RATE "sampleRate"
+#define CONFIG_NAME_AUDIO_SAMPLE_SIZE "sampleSize"
+#define CONFIG_NAME_AUDIO_SAMPLE_TYPE "sampleType"
+#define CONFIG_NAME_AUDIO_ENDIAN "endian"
+#define CONFIG_NAME_AUDIO_CODEC "codec"
+
+#define CONFIG_NAME_AUDIO_CHUNK_SIZE "audioChunkSize"
+#define CONFIG_NAME_FFT_SAMPLE_SIZE "fftSampleSize"
+
 namespace audioreceiver {
 
     class Config : public QObject {
@@ -90,6 +105,15 @@ namespace audioreceiver {
 
         void setAudioOutputCodec(const QString &newValue);
 
+        [[nodiscard]] int getDSPSettingsAudioChunkSize() const;
+
+        void setDSPSettingsAudioChunkSize(int newValue);
+
+        [[nodiscard]] int getDSPSettingsFFTSampleSize() const;
+
+        void setDSPSettingsFFTSampleSize(int newValue);
+
+
     public slots:
 
         void load();
@@ -113,6 +137,9 @@ namespace audioreceiver {
         QAudioFormat::SampleType audioOutputSampleType;
         QAudioFormat::Endian audioOutputEndian;
         QString audioOutputCodec;
+
+        int dspSettingsAudioChunkSize;
+        int dspSettingsFFTSampleSize;
 
     };
 

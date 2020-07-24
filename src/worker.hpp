@@ -20,6 +20,9 @@
 #define __AUDIORECEIVER__WORKER_H
 
 #include <QtCore/QObject>
+#include <QtCore/QList>
+#include <QtCore/QQueue>
+
 #include <QtMultimedia/QAudioDeviceInfo>
 #include <QtMultimedia/QAudioFormat>
 
@@ -61,7 +64,19 @@ namespace audioreceiver {
 
         void setOutputAudioFormat(const QAudioFormat &outputAudioFormat);
 
+        [[nodiscard]] int getAudioChunkSize() const;
+
+        void setAudioChunkSize(int newValue);
+
+        [[nodiscard]] int getFftSampleSize() const;
+
+        void setFftSampleSize(int newValue);
+
         [[nodiscard]] qreal getGain() const;
+
+        [[nodiscard]] bool isBfoStatus() const;
+
+        [[nodiscard]] unsigned int getBfoFrequency() const;
 
     public slots:
 
@@ -71,9 +86,9 @@ namespace audioreceiver {
 
         void setGain(qreal newValue);
 
-        void setBFOStatus(bool newStatus);
+        void setBFOStatus(bool newValue);
 
-        void setBFOFrequency(unsigned int frequency);
+        void setBFOFrequency(unsigned int newValue);
 
     private:
 
@@ -90,7 +105,14 @@ namespace audioreceiver {
         QAudioDeviceInfo outputAudioDeviceInfo;
         QAudioFormat outputAudioFormat;
 
+        int audioChunkSize;
+        int fftSampleSize;
+
         qreal gain;
+        bool bfoStatus;
+        unsigned int bfoFrequency;
+
+        QQueue<qreal> fftBuffer;
 
     private slots:
 

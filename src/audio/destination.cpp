@@ -36,7 +36,6 @@ Destination::Destination(QObject *parent) : Service(parent) {
 
 Destination::~Destination() {
     delete audioOutput;
-    delete audioIODevice;
 }
 
 const QAudioDeviceInfo &Destination::getDeviceInfo() const {

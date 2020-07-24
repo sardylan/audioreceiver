@@ -68,12 +68,12 @@ namespace audioreceiver::windows {
         void checkStatus();
 
         static void
-        initDeviceComboBox(QComboBox *comboBox,
-                           QAudio::Mode mode);
+        initAudioDeviceComboBox(QComboBox *comboBox,
+                                QAudio::Mode mode);
 
         static void
         updateDeviceComboBox(QComboBox *comboBox,
-                             const QString& currentValue);
+                             const QString &currentValue);
 
         static void
         updateChannelsComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
@@ -98,6 +98,10 @@ namespace audioreceiver::windows {
         static void
         updateCodecComboBox(QComboBox *comboBox, const QAudioDeviceInfo &audioDeviceInfo,
                             const QString &currentValue);
+
+        static void initDSPSettingsComboBox(QComboBox *comboBox, int from, int to);
+
+        static void updateDSPSettingsComboBox(QComboBox *comboBox, int currentValue);
 
     private slots:
 

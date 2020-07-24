@@ -16,6 +16,8 @@
  *
  */
 
+#include <QtCore/QtMath>
+
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QDialogButtonBox>
@@ -69,8 +71,11 @@ void Config::signalConnect() {
 }
 
 void Config::initUi() {
-    initDeviceComboBox(ui->audioInputDeviceComboBox, QAudio::AudioInput);
-    initDeviceComboBox(ui->audioOutputDeviceComboBox, QAudio::AudioOutput);
+    initAudioDeviceComboBox(ui->audioInputDeviceComboBox, QAudio::AudioInput);
+    initAudioDeviceComboBox(ui->audioOutputDeviceComboBox, QAudio::AudioOutput);
+
+    initDSPSettingsComboBox(ui->dspSettingsAudioChunkSizeComboBox, 8, 15);
+    initDSPSettingsComboBox(ui->dspSettingsFFTSampleSizeComboBox, 8, 20);
 }
 
 void Config::load() {
@@ -81,6 +86,9 @@ void Config::load() {
 
     updateDeviceComboBox(ui->audioOutputDeviceComboBox, config->getAudioOutputDevice());
     updateOutputDeviceOptions();
+
+    updateDSPSettingsComboBox(ui->dspSettingsAudioChunkSizeComboBox, config->getDSPSettingsAudioChunkSize());
+    updateDSPSettingsComboBox(ui->dspSettingsFFTSampleSizeComboBox, config->getDSPSettingsFFTSampleSize());
 }
 
 void Config::save() {
@@ -98,6 +106,9 @@ void Config::save() {
     config->setAudioOutputSampleType(
             ui->audioOutputSampleTypeComboBox->currentData().value<QAudioFormat::SampleType>());
     config->setAudioOutputCodec(ui->audioOutputCodecComboBox->currentData().value<QString>());
+
+    config->setDSPSettingsAudioChunkSize(ui->dspSettingsAudioChunkSizeComboBox->currentData().value<int>());
+    config->setDSPSettingsFFTSampleSize(ui->dspSettingsFFTSampleSizeComboBox->currentData().value<int>());
 
     QMetaObject::invokeMethod(config, &audioreceiver::Config::save);
 }
@@ -118,6 +129,9 @@ void Config::checkStatus() {
     ui->audioOutputSampleSizeComboBox->setEnabled(enabled);
     ui->audioOutputSampleTypeComboBox->setEnabled(enabled);
     ui->audioOutputCodecComboBox->setEnabled(enabled);
+
+    ui->dspSettingsAudioChunkSizeComboBox->setEnabled(enabled);
+    ui->dspSettingsFFTSampleSizeComboBox->setEnabled(enabled);
 }
 
 void Config::handleOK() {
@@ -159,7 +173,7 @@ void Config::updateOutputDeviceOptions() {
     updateCodecComboBox(ui->audioOutputCodecComboBox, audioDeviceInfo, config->getAudioOutputCodec());
 }
 
-void Config::initDeviceComboBox(QComboBox *comboBox, QAudio::Mode mode) {
+void Config::initAudioDeviceComboBox(QComboBox *comboBox, QAudio::Mode mode) {
     comboBox->clear();
     comboBox->addItem("");
 
@@ -167,7 +181,7 @@ void Config::initDeviceComboBox(QComboBox *comboBox, QAudio::Mode mode) {
         comboBox->addItem(audioDeviceInfo.deviceName(), QVariant::fromValue(audioDeviceInfo));
 }
 
-void Config::updateDeviceComboBox(QComboBox *comboBox, const QString& currentValue) {
+void Config::updateDeviceComboBox(QComboBox *comboBox, const QString &currentValue) {
     int index = -1;
     for (int i = 0; i < comboBox->count(); i++)
         if (comboBox->itemData(i).value<QAudioDeviceInfo>().deviceName() == currentValue) {
@@ -285,6 +299,23 @@ void Config::updateCodecComboBox(QComboBox *comboBox, const QAudioDeviceInfo &au
 
     for (int i = 0; i < comboBox->count(); i++)
         if (comboBox->itemData(i).value<QString>() == currentValue) {
+            comboBox->setCurrentIndex(i);
+            break;
+        }
+}
+
+void Config::initDSPSettingsComboBox(QComboBox *comboBox, int from, int to) {
+    comboBox->clear();
+
+    for (int i = from; i <= to; i++) {
+        qreal value = qPow(2, i);
+        comboBox->addItem(QString("%1").arg(value), QVariant(value));
+    }
+}
+
+void Config::updateDSPSettingsComboBox(QComboBox *comboBox, int currentValue) {
+    for (int i = 0; i < comboBox->count(); i++)
+        if (comboBox->itemData(i).value<int>() == currentValue) {
             comboBox->setCurrentIndex(i);
             break;
         }

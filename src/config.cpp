@@ -155,55 +155,95 @@ void Config::setAudioOutputCodec(const QString &newValue) {
     Config::audioOutputCodec = newValue;
 }
 
+int Config::getDSPSettingsAudioChunkSize() const {
+    return dspSettingsAudioChunkSize;
+}
+
+void Config::setDSPSettingsAudioChunkSize(int newValue) {
+    Config::dspSettingsAudioChunkSize = newValue;
+}
+
+int Config::getDSPSettingsFFTSampleSize() const {
+    return dspSettingsFFTSampleSize;
+}
+
+void Config::setDSPSettingsFFTSampleSize(int newValue) {
+    dspSettingsFFTSampleSize = newValue;
+}
+
 void Config::load() {
     QSettings settings;
 
-    settings.beginGroup("audioInput");
-    setAudioInputDevice(settings.value("device", CONFIG_AUDIO_INPUT_DEVICE_DEFAULT).toString());
-    setAudioInputChannels(settings.value("channels", CONFIG_AUDIO_INPUT_CHANNELS_DEFAULT).toInt());
-    setAudioInputSampleRate(settings.value("sampleRate", CONFIG_AUDIO_INPUT_SAMPLE_RATE_DEFAULT).toInt());
-    setAudioInputSampleSize(settings.value("sampleSize", CONFIG_AUDIO_INPUT_SAMPLE_SIZE_DEFAULT).toInt());
+    settings.beginGroup(CONFIG_NAME_AUDIO_INPUT);
+    setAudioInputDevice(
+            settings.value(CONFIG_NAME_AUDIO_DEVICE, CONFIG_AUDIO_INPUT_DEVICE_DEFAULT).toString());
+    setAudioInputChannels(
+            settings.value(CONFIG_NAME_AUDIO_CHANNELS, CONFIG_AUDIO_INPUT_CHANNELS_DEFAULT).toInt());
+    setAudioInputSampleRate(
+            settings.value(CONFIG_NAME_AUDIO_SAMPLE_RATE, CONFIG_AUDIO_INPUT_SAMPLE_RATE_DEFAULT).toInt());
+    setAudioInputSampleSize(
+            settings.value(CONFIG_NAME_AUDIO_SAMPLE_SIZE, CONFIG_AUDIO_INPUT_SAMPLE_SIZE_DEFAULT).toInt());
     setAudioInputSampleType(
-            settings.value("sampleType", CONFIG_AUDIO_INPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
+            settings.value(CONFIG_NAME_AUDIO_SAMPLE_TYPE,
+                           CONFIG_AUDIO_INPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
     setAudioInputEndian(
-            settings.value("endian", CONFIG_AUDIO_INPUT_ENDIAN_DEFAULT).value<QAudioFormat::Endian>());
-    setAudioInputCodec(settings.value("codec", CONFIG_AUDIO_INPUT_CODEC_DEFAULT).value<QString>());
+            settings.value(CONFIG_NAME_AUDIO_ENDIAN, CONFIG_AUDIO_INPUT_ENDIAN_DEFAULT).value<QAudioFormat::Endian>());
+    setAudioInputCodec(
+            settings.value(CONFIG_NAME_AUDIO_CODEC, CONFIG_AUDIO_INPUT_CODEC_DEFAULT).value<QString>());
     settings.endGroup();
 
-    settings.beginGroup("audioOutput");
-    setAudioOutputDevice(settings.value("device", CONFIG_AUDIO_OUTPUT_DEVICE_DEFAULT).toString());
-    setAudioOutputChannels(settings.value("channels", CONFIG_AUDIO_OUTPUT_CHANNELS_DEFAULT).toInt());
-    setAudioOutputSampleRate(settings.value("sampleRate", CONFIG_AUDIO_OUTPUT_SAMPLE_RATE_DEFAULT).toInt());
-    setAudioOutputSampleSize(settings.value("sampleSize", CONFIG_AUDIO_OUTPUT_SAMPLE_SIZE_DEFAULT).toInt());
+    settings.beginGroup(CONFIG_NAME_AUDIO_OUTPUT);
+    setAudioOutputDevice(
+            settings.value(CONFIG_NAME_AUDIO_DEVICE, CONFIG_AUDIO_OUTPUT_DEVICE_DEFAULT).toString());
+    setAudioOutputChannels(
+            settings.value(CONFIG_NAME_AUDIO_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS_DEFAULT).toInt());
+    setAudioOutputSampleRate(
+            settings.value(CONFIG_NAME_AUDIO_SAMPLE_RATE, CONFIG_AUDIO_OUTPUT_SAMPLE_RATE_DEFAULT).toInt());
+    setAudioOutputSampleSize(
+            settings.value(CONFIG_NAME_AUDIO_SAMPLE_SIZE, CONFIG_AUDIO_OUTPUT_SAMPLE_SIZE_DEFAULT).toInt());
     setAudioOutputSampleType(
-            settings.value("sampleType", CONFIG_AUDIO_OUTPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
+            settings.value(CONFIG_NAME_AUDIO_SAMPLE_TYPE,
+                           CONFIG_AUDIO_OUTPUT_SAMPLE_TYPE_DEFAULT).value<QAudioFormat::SampleType>());
     setAudioOutputEndian(
-            settings.value("endian", CONFIG_AUDIO_OUTPUT_ENDIAN_DEFAULT).value<QAudioFormat::Endian>());
-    setAudioInputCodec(settings.value("codec", CONFIG_AUDIO_OUTPUT_CODEC_DEFAULT).value<QString>());
+            settings.value(CONFIG_NAME_AUDIO_ENDIAN, CONFIG_AUDIO_OUTPUT_ENDIAN_DEFAULT).value<QAudioFormat::Endian>());
+    setAudioInputCodec(
+            settings.value(CONFIG_NAME_AUDIO_CODEC, CONFIG_AUDIO_OUTPUT_CODEC_DEFAULT).value<QString>());
+    settings.endGroup();
+
+    settings.beginGroup(CONFIG_NAME_DSP_SETTINGS);
+    setDSPSettingsAudioChunkSize(
+            settings.value(CONFIG_NAME_AUDIO_CHUNK_SIZE, CONFIG_GENERAL_AUDIO_CHUNK_SIZE_DEFAULT).toInt());
+    setDSPSettingsFFTSampleSize(
+            settings.value(CONFIG_NAME_FFT_SAMPLE_SIZE, CONFIG_GENERAL_FFT_SAMPLE_SIZE_DEFAULT).toInt());
     settings.endGroup();
 }
 
 void Config::save() const {
     QSettings settings;
 
-    settings.beginGroup("audioInput");
-    settings.setValue("device", getAudioInputDevice());
-    settings.setValue("channels", getAudioInputChannels());
-    settings.setValue("sampleRate", getAudioInputSampleRate());
-    settings.setValue("sampleSize", getAudioInputSampleSize());
-    settings.setValue("sampleType", getAudioInputSampleType());
-    settings.setValue("endian", getAudioInputEndian());
-    settings.setValue("codec", getAudioInputCodec());
+    settings.beginGroup(CONFIG_NAME_AUDIO_INPUT);
+    settings.setValue(CONFIG_NAME_AUDIO_DEVICE, getAudioInputDevice());
+    settings.setValue(CONFIG_NAME_AUDIO_CHANNELS, getAudioInputChannels());
+    settings.setValue(CONFIG_NAME_AUDIO_SAMPLE_RATE, getAudioInputSampleRate());
+    settings.setValue(CONFIG_NAME_AUDIO_SAMPLE_SIZE, getAudioInputSampleSize());
+    settings.setValue(CONFIG_NAME_AUDIO_SAMPLE_TYPE, getAudioInputSampleType());
+    settings.setValue(CONFIG_NAME_AUDIO_ENDIAN, getAudioInputEndian());
+    settings.setValue(CONFIG_NAME_AUDIO_CODEC, getAudioInputCodec());
     settings.endGroup();
 
-    settings.beginGroup("audioOutput");
-    settings.setValue("device", getAudioOutputDevice());
-    settings.setValue("channels", getAudioOutputChannels());
-    settings.setValue("sampleRate", getAudioOutputSampleRate());
-    settings.setValue("sampleSize", getAudioOutputSampleSize());
-    settings.setValue("sampleType", getAudioOutputSampleType());
-    settings.setValue("endian", getAudioOutputEndian());
-    settings.setValue("codec", getAudioOutputCodec());
+    settings.beginGroup(CONFIG_NAME_AUDIO_OUTPUT);
+    settings.setValue(CONFIG_NAME_AUDIO_DEVICE, getAudioOutputDevice());
+    settings.setValue(CONFIG_NAME_AUDIO_CHANNELS, getAudioOutputChannels());
+    settings.setValue(CONFIG_NAME_AUDIO_SAMPLE_RATE, getAudioOutputSampleRate());
+    settings.setValue(CONFIG_NAME_AUDIO_SAMPLE_SIZE, getAudioOutputSampleSize());
+    settings.setValue(CONFIG_NAME_AUDIO_SAMPLE_TYPE, getAudioOutputSampleType());
+    settings.setValue(CONFIG_NAME_AUDIO_ENDIAN, getAudioOutputEndian());
+    settings.setValue(CONFIG_NAME_AUDIO_CODEC, getAudioOutputCodec());
+    settings.endGroup();
+
+    settings.beginGroup(CONFIG_NAME_DSP_SETTINGS);
+    settings.setValue(CONFIG_NAME_AUDIO_CHUNK_SIZE, getDSPSettingsAudioChunkSize());
+    settings.setValue(CONFIG_NAME_FFT_SAMPLE_SIZE, getDSPSettingsFFTSampleSize());
     settings.endGroup();
 
     settings.sync();

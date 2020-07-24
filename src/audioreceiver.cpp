@@ -132,8 +132,6 @@ AudioReceiver::~AudioReceiver() {
 }
 
 void AudioReceiver::start() {
-    qInfo() << "Starting Audio Receiver";
-
     config->load();
     config->save();
 
@@ -144,8 +142,6 @@ void AudioReceiver::start() {
 }
 
 void AudioReceiver::stop() {
-    qInfo() << "Audio Receiver Stop";
-
     QMetaObject::invokeMethod(this, &AudioReceiver::finished, Qt::QueuedConnection);
 }
 
@@ -215,7 +211,10 @@ void AudioReceiver::updateWorkerParams() {
     outputAudioFormat = outputAudioDeviceInfo.nearestFormat(outputAudioFormat);
     worker->setOutputAudioFormat(outputAudioFormat);
 
-    QMetaObject::invokeMethod(mainWindow, "updateAudioDevicesParams", Qt::QueuedConnection,
+    worker->setAudioChunkSize(config->getDSPSettingsAudioChunkSize());
+    worker->setFftSampleSize(config->getDSPSettingsFFTSampleSize());
+
+    QMetaObject::invokeMethod(mainWindow, "updateUiFromConfig", Qt::QueuedConnection,
                               Q_ARG(QAudioDeviceInfo, inputAudioDeviceInfo),
                               Q_ARG(QAudioFormat, inputAudioFormat),
                               Q_ARG(QAudioDeviceInfo, outputAudioDeviceInfo),

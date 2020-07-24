@@ -42,7 +42,6 @@ Source::~Source() {
     delete buffer;
 
     delete audioInput;
-    delete audioIODevice;
 }
 
 int Source::getFrameSize() const {
@@ -78,7 +77,6 @@ void Source::start() {
     qDebug() << "Source Audio format:" << audioFormat;
 
     audioInput = new QAudioInput(deviceInfo, audioFormat);
-//    audioInput->setBufferSize(AUDIO_BUFFER_INPUT);
 
     buffer->clear();
     emitBufferSize();
@@ -90,6 +88,8 @@ void Source::start() {
 void Source::stop() {
     disconnect(audioIODevice, &QIODevice::readyRead, this, &Source::readAudioBytes);
     audioInput->stop();
+
+    audioIODevice = nullptr;
 
     audioInput->deleteLater();
 

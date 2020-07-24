@@ -43,6 +43,10 @@ namespace audioreceiver::utilities {
 
         QThread *thread;
 
+    signals:
+
+        void terminated();
+
     };
 
 }

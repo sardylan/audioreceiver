@@ -24,11 +24,14 @@ using namespace audioreceiver::utilities;
 
 Service::Service(QObject *parent) : QObject() {
     thread = new QThread(parent);
+
+    connect(this, &Service::terminated, thread, &QThread::terminate);
+    connect(this, &Service::terminated, thread, &QThread::deleteLater);
+
     moveToThread(thread);
     thread->start();
 }
 
 Service::~Service() {
-    thread->terminate();
-    thread->deleteLater();
+    QMetaObject::invokeMethod(this, &Service::terminated, Qt::QueuedConnection);
 }

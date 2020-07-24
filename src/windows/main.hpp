@@ -59,8 +59,8 @@ namespace audioreceiver::windows {
     public slots:
 
         void
-        updateAudioDevicesParams(const QAudioDeviceInfo &inputAudioDeviceInfo, const QAudioFormat &inputAudioFormat,
-                                 const QAudioDeviceInfo &outputAudioDeviceInfo, const QAudioFormat &outputAudioFormat);
+        updateUiFromConfig(const QAudioDeviceInfo &inputAudioDeviceInfo, const QAudioFormat &inputAudioFormat,
+                           const QAudioDeviceInfo &outputAudioDeviceInfo, const QAudioFormat &outputAudioFormat);
 
         void updateWorkerStatus(bool value);
 
@@ -78,8 +78,9 @@ namespace audioreceiver::windows {
 
         QLabel *statusBarClockLabel;
         QLabel *statusBarVersionLabel;
-        QLabel *statusBarAudioInputDevice;
-        QLabel *statusBarAudioInputFormat;
+        QLabel *statusBarAudioInputDeviceLabel;
+        QLabel *statusBarAudioInputFormatLabel;
+        QLabel *statusBarDSPSettingsLabel;
 
         QTimer *clockTimer;
 
@@ -93,6 +94,8 @@ namespace audioreceiver::windows {
         void initUi();
 
         static QString prepareAudioFormatString(const QAudioFormat &inputAudioFormat);
+
+        static void statusBarWidgetStyle(QLabel *label);
 
     private slots:
 

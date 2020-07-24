@@ -48,8 +48,6 @@ QList<qreal> FFT::computeLog(const QList<qreal> &data) {
 }
 
 QList<qreal> FFT::computeFFT(const QList<qreal> &data, bool logScale) {
-//    qDebug() << "FFT start";
-
     fftLock.lock();
 
     for (unsigned int i = 0; i < size; i++)
@@ -64,17 +62,22 @@ QList<qreal> FFT::computeFFT(const QList<qreal> &data, bool logScale) {
     for (unsigned int i = 0; i <= samples; i++) {
         auto re = (qreal) output[i];
         auto im = (qreal) output[size - i];
+
         qreal magnitude = qSqrt((re * re) + (im * im));
+        qreal normalized = magnitude / size;
 
-        if (logScale)
-            magnitude = Utility::logScale(magnitude);
+        if (logScale) {
+            normalized = Utility::logScale(normalized);
+            normalized = Utility::logScale(normalized);
+        }
 
-        fft.append(magnitude);
+        fft.append(normalized);
+
+        if (normalized > 1)
+            qWarning() << "Value out of scale";
     }
 
     fftLock.unlock();
-
-//    qDebug() << "FFT end";
 
     return fft;
 }
