@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Prepare
-        run: sudo apt install qt5-default qtmultimedia5-dev libqt5svg5-dev mesa-common-dev
+        run: sudo apt install qt5-default qtmultimedia5-dev libqt5svg5-dev libfftw3-dev mesa-common-dev
       - name: Configure
         run: mkdir build && cd build && cmake ..
       - name: Make
