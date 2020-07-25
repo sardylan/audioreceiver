@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<RCC>
+
+    <qresource prefix="/action/application">
+        <file alias="play.svg">icons/actions/play.svg</file>
+        <file alias="settings.svg">icons/actions/settings.svg</file>
+    </qresource>
+
+</RCC>

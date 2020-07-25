@@ -4,7 +4,7 @@ find_package(Qt5 REQUIRED
 add_library(windows
         main.cpp main.hpp main.ui
         config.cpp config.hpp config.ui
-        resources.qrc)
+        windows.qrc)
 
 target_link_libraries(windows
         Qt5::Core

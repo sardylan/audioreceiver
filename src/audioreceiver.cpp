@@ -94,6 +94,8 @@ int main(int argc, char **argv) {
                        "[\x1b[97m%{function}()\x1b[39m] "
                        "%{message}");
 
+    Q_INIT_RESOURCE(windows);
+
     QApplication application(argc, argv);
 
     audioReceiver = new AudioReceiver();
