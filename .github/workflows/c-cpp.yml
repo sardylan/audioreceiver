@@ -26,15 +26,17 @@ jobs:
       - name: Configure
         run: source /opt/qt514/bin/qt514-env.sh && mkdir build && cd build && cmake .. -DFFTW3_DIR="${{ github.workspace }}/3rdparty/fftw-3.3.8-install/lib/cmake/fftw3"
       - name: Make
-        run: cd build && make
+        run: source /opt/qt514/bin/qt514-env.sh && cd build && make
       - name: Make check
-        run: cd build && make test
+        run: source /opt/qt514/bin/qt514-env.sh && cd build && make test
   windows:
     name: "Windows"
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.1
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
@@ -44,7 +46,7 @@ jobs:
       - name: FFTW3 Download
         run: cd 3rdparty && curl -o fftw-3.3.8.zip ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.zip && 7z.exe x fftw-3.3.8.zip
       - name: FFTW3 Configure
-        run: cd 3rdparty && mkdir fftw-3.3.8-build && mkdir fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
+        run: cd 3rdparty && mkdir fftw-3.3.8-build && mkdir fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DCMAKE_C_FLAGS="-DWITH_OUR_MALLOC -O3" -DCMAKE_CXX_FLAGS="-DWITH_OUR_MALLOC -O3" -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
       - name: FFTW3 Build
         run: cd 3rdparty/fftw-3.3.8-build && msbuild
 #  macos:
