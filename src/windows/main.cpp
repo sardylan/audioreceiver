@@ -18,6 +18,8 @@
 
 #include <QtCore/QDebug>
 
+#include <QtWidgets/QAction>
+
 #include "main.hpp"
 #include "ui_main.h"
 
