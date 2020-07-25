@@ -10,10 +10,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Prepare
-        run: sudo apt install qt5-default qtmultimedia5-dev libqt5svg5-dev libfftw3-dev mesa-common-dev
+      - name: Prepare OS
+        run: sudo apt install qt5-default qtmultimedia5-dev libqt5svg5-dev mesa-common-dev
+      - name: Create 3rdparty directory
+        run: mkdir -p 3rdparty
+      - name: FFTW3 Download
+        run: cd 3rdparty && wget http://www.fftw.org/fftw-3.3.8.tar.gz && tar xf fftw-3.3.8.tar.gz
+      - name: FFTW3 Configure
+        run: cd 3rdparty && mkdir fftw-3.3.8-build fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
+      - name: FFTW3 Build
+        run: cd 3rdparty/fftw-3.3.8-build && make
+      - name: FFTW3 Install
+        run: cd 3rdparty/fftw-3.3.8-build && make install
       - name: Configure
-        run: mkdir build && cd build && cmake ..
+        run: cd build && CMAKE_MODULES_PATH="../3rdparty/fftw-3.3.8-install:$CMAKE_MODULES_PATH" cmake ..
       - name: Make
         run: cd build && make
       - name: Make check
