@@ -126,7 +126,9 @@ void Waterfall::paintGL() {
 
 void Waterfall::mouseMoveEvent(QMouseEvent *event) {
     mousePosX = event->pos().x();
+}
 
+void Waterfall::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         auto mouseFrequency = (unsigned int) (((double) mousePosX / width) * frequency);
         QMetaObject::invokeMethod(this, "newClickFrequency", Qt::QueuedConnection, Q_ARG(unsigned int, mouseFrequency));
