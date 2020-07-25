@@ -23,7 +23,7 @@ jobs:
       - name: FFTW3 Install
         run: cd 3rdparty/fftw-3.3.8-build && make -j install
       - name: Configure
-        run: mkdir build && cd build && CMAKE_MODULE_PATH="../3rdparty/fftw-3.3.8-install:$CMAKE_MODULE_PATH" cmake ..
+        run: mkdir build && cd build && CMAKE_MODULE_PATH="../3rdparty/fftw-3.3.8-install/lib/cmake:$CMAKE_MODULE_PATH" cmake ..
       - name: Make
         run: cd build && make
       - name: Make check
