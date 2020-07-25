@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ master ]
 jobs:
-  - linux:
+  linux:
     name: "Linux Ubuntu"
     runs-on: ubuntu-latest
     steps:
@@ -31,7 +31,7 @@ jobs:
         run: cd build && make check
       - name: Make distcheck
         run: cd build && make distcheck
-  - windows:
+  windows:
     name: "Windows"
     runs-on: windows-latest
     steps:
