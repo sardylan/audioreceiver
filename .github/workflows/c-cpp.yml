@@ -28,9 +28,7 @@ jobs:
       - name: Make
         run: cd build && make
       - name: Make check
-        run: cd build && make check
-      - name: Make distcheck
-        run: cd build && make distcheck
+        run: cd build && make test
   windows:
     name: "Windows"
     runs-on: windows-latest
@@ -46,7 +44,7 @@ jobs:
       - name: FFTW3 Download
         run: cd 3rdparty && curl -o fftw-3.3.8.zip ftp://ftp.fftw.org/pub/fftw/fftw-3.3.8.zip && 7z.exe x fftw-3.3.8.zip
       - name: FFTW3 Configure
-        run: cd 3rdparty && mkdir fftw-3.3.8-build fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
+        run: cd 3rdparty && mkdir fftw-3.3.8-build && mkdir fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
       - name: FFTW3 Build
         run: cd 3rdparty/fftw-3.3.8-build && msbuild
 #  macos:
