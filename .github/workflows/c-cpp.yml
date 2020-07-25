@@ -40,7 +40,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          - version: 5.15.0
+          version: 5.15.0
       - name: Create 3rdparty directory
         run: mkdir -p 3rdparty
       - name: FFTW3 Download
