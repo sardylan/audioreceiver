@@ -19,11 +19,11 @@ jobs:
       - name: FFTW3 Configure
         run: cd 3rdparty && mkdir fftw-3.3.8-build fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
       - name: FFTW3 Build
-        run: cd 3rdparty/fftw-3.3.8-build && make
+        run: cd 3rdparty/fftw-3.3.8-build && make -j
       - name: FFTW3 Install
-        run: cd 3rdparty/fftw-3.3.8-build && make install
+        run: cd 3rdparty/fftw-3.3.8-build && make -j install
       - name: Configure
-        run: cd build && CMAKE_MODULES_PATH="../3rdparty/fftw-3.3.8-install:$CMAKE_MODULES_PATH" cmake ..
+        run: mkdir build && cd build && CMAKE_MODULES_PATH="../3rdparty/fftw-3.3.8-install:$CMAKE_MODULES_PATH" cmake ..
       - name: Make
         run: cd build && make
       - name: Make check
