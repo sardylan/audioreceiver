@@ -20,6 +20,7 @@
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QDebug>
+#include <QtCore/QString>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QList>
 #include <QtCore/QFuture>
@@ -72,13 +73,17 @@ BOOL WINAPI ctrlHandler(DWORD fdwCtrlType) {
 
 #endif
 
+
+[[maybe_unused]] const char* applicationBuild = APPLICATION_BUILD;
+
 int main(int argc, char **argv) {
     qRegisterMetaType<audioreceiver::model::Frame>("audioreceiver::model::Frame");
 
-    QCoreApplication::setApplicationName(APPLICATION_NAME);
-    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
     QCoreApplication::setOrganizationName(ORGANIZATION_NAME);
     QCoreApplication::setOrganizationDomain(ORGANIZATION_DOMAIN);
+
+    QCoreApplication::setApplicationName(APPLICATION_NAME);
+    QCoreApplication::setApplicationVersion(APPLICATION_VERSION);
 
     qSetMessagePattern("\x1b[94;1m[\x1b[96;1m%{time yyyy-MM-dd hh:mm:ss.zzz}\x1b[94;1m]\x1b[39;0m "
                        "PID:\x1b[31m%{pid}\x1b[39m "

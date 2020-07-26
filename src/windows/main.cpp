@@ -25,6 +25,8 @@
 
 using namespace audioreceiver::windows;
 
+extern const char* applicationBuild;
+
 Main::Main(audioreceiver::Config *config, QWidget *parent) : QMainWindow(parent), ui(new Ui::Main) {
     ui->setupUi(this);
 
@@ -171,7 +173,12 @@ void Main::initUi() {
     ui->bfoEnableCheckBox->setChecked(false);
     updateBFOEnabled();
 
-    setWindowTitle(QString("%1 %2").arg(QApplication::applicationName()).arg(QApplication::applicationVersion()));
+    setWindowTitle(
+            QString("%1 %2 - %3")
+                    .arg(QApplication::applicationName())
+                    .arg(QApplication::applicationVersion())
+                    .arg(applicationBuild)
+    );
 
     ui->gainSlider->setMinimum(0);
     ui->gainSlider->setMaximum(AUDIORECEIVER_AUDIO_GAIN_MAX_DB * AUDIORECEIVER_AUDIO_GAIN_RESOLUTION);
