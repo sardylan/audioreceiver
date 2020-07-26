@@ -56,7 +56,7 @@ jobs:
       - name: FFTW3 Install
         run: cd 3rdparty/fftw-3.3.8-build && msbuild INSTALL.vcxproj
       - name: Configure
-        run: mkdir build && cd build && cmake .. -DFFTW3_DIR="${{ github.workspace }}/3rdparty/fftw-3.3.8-install/lib/cmake/fftw3"
+        run: mkdir build && cd build && cmake .. -DFFTW3_DIR="../3rdparty/fftw-3.3.8-install/lib/cmake/fftw3"
       - name: Make
         run: cd build && msbuild audioreceiver.sln
       - name: Make check
