@@ -1,8 +1,8 @@
 find_package(Qt5 REQUIRED
         COMPONENTS Core Multimedia Test)
 
-find_package(FFTW3 REQUIRED
-        COMPONENTS fftw3)
+find_package(FFTW REQUIRED
+        COMPONENTS DOUBLE_LIB)
 
 add_library(dsp
         bfo.cpp bfo.hpp
@@ -13,7 +13,7 @@ add_library(dsp
 target_link_libraries(dsp
         Qt5::Core
         Qt5::Multimedia
-        FFTW3::fftw3)
+        FFTW::Double)
 
 target_compile_options(dsp
         PRIVATE
