@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Prepare OS
-        run: sudo add-apt-repository ppa:beineri/opt-qt-5.15.0-focal && sudo apt-get update && sudo apt install qt515-meta-full mesa-common-dev libgl1-mesa-dev
+        run: sudo add-apt-repository ppa:beineri/opt-qt-5.14.2-focal && sudo apt-get update && sudo apt install qt514-meta-full mesa-common-dev libgl1-mesa-dev
       - name: Create 3rdparty directory
         run: mkdir -p 3rdparty
       - name: FFTW3 Download
@@ -26,13 +26,13 @@ jobs:
       - name: FFTW3 Install
         run: cd 3rdparty/fftw-3.3.8-build && make -j install
       - name: Configure
-        run: source /opt/qt515/bin/qt515-env.sh && mkdir build && cd build && cmake .. -DFFTW3_DIR="${{ github.workspace }}/3rdparty/fftw-3.3.8-install/lib/cmake/fftw3"
+        run: source /opt/qt514/bin/qt514-env.sh && mkdir build && cd build && cmake .. -DFFTW3_DIR="${{ github.workspace }}/3rdparty/fftw-3.3.8-install/lib/cmake/fftw3"
       - name: Make
-        run: source /opt/qt515/bin/qt515-env.sh && cd build && make
+        run: source /opt/qt514/bin/qt514-env.sh && cd build && make
       - name: Tests
-        run: source /opt/qt515/bin/qt515-env.sh && cd build && make test
+        run: source /opt/qt514/bin/qt514-env.sh && cd build && make test
       - name: Package
-        run: source /opt/qt515/bin/qt515-env.sh && cd build && make package
+        run: source /opt/qt514/bin/qt514-env.sh && cd build && make package
   windows:
     name: "Windows"
     runs-on: windows-latest
