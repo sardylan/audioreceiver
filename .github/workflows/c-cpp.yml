@@ -13,18 +13,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Prepare OS
         run: sudo add-apt-repository ppa:beineri/opt-qt-5.14.2-bionic && sudo apt-get update && sudo apt install qt514-meta-full mesa-common-dev libgl1-mesa-dev libfftw3-3 libfftw3-dev
-#      - name: Create 3rdparty directory
-#        run: mkdir -p 3rdparty
-#      - name: FFTW3 Download
-#        run: cd 3rdparty && wget http://www.fftw.org/fftw-3.3.8.tar.gz && tar xf fftw-3.3.8.tar.gz
-#      - name: FFTW3 Configure
-#        run: cd 3rdparty && mkdir fftw-3.3.8-build fftw-3.3.8-install && cd fftw-3.3.8-build && cmake ../fftw-3.3.8 -DCMAKE_INSTALL_PREFIX=../fftw-3.3.8-install -DENABLE_SSE=TRUE -DENABLE_SSE2=TRUE -DENABLE_AVX=TRUE -DENABLE_AVX2=TRUE -DENABLE_THREADS=TRUE -DWITH_COMBINED_THREADS=TRUE
-#      - name: FFTW3 Build
-#        run: cd 3rdparty/fftw-3.3.8-build && make -j
-#      - name: FFTW3 Test
-#        run: cd 3rdparty/fftw-3.3.8-build && make -j test
-#      - name: FFTW3 Install
-#        run: cd 3rdparty/fftw-3.3.8-build && make -j install
       - name: Configure
         run: source /opt/qt514/bin/qt514-env.sh && mkdir build && cd build && cmake .."
       - name: Make
@@ -58,7 +46,7 @@ jobs:
       - name: FFTW3 Install
         run: cd 3rdparty/fftw-3.3.8-build && msbuild INSTALL.vcxproj
       - name: Configure
-        run: mkdir build && cd build && cmake .. -DFFTW_ROOT="../fftw-3.3.8-install"
+        run: mkdir build && cd build && cmake .. "-DFFTW_ROOT=..\fftw-3.3.8-install"
       - name: Make
         run: cd build && msbuild audioreceiver.sln
       - name: Make check

@@ -70,7 +70,7 @@ install(TARGETS audioreceiver
         COMPONENT audioreceiver)
 
 if (WIN32 OR APPLE)
-    install(DIRECTORY ${PROJECT_BINARY_DIR}/windeployqt/
-            DESTINATION ${CMAKE_INSTALL_BINDIR}
+    install(DIRECTORY "${PROJECT_BINARY_DIR}/windeployqt"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}"
             COMPONENT qtlibs)
 endif ()

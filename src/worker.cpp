@@ -20,9 +20,9 @@
 
 #include <QtConcurrent/QtConcurrent>
 
-#include <dsp/utility.hpp>
-
 #include "worker.hpp"
+
+#include "dsp/utility.hpp"
 
 using namespace audioreceiver;
 

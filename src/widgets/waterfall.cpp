@@ -18,6 +18,10 @@
 
 #include <QtCore/QDebug>
 
+#ifdef Q_OS_WINDOWS
+#include <windows.h>
+#endif
+
 #include <GL/gl.h>
 
 #include "waterfall.hpp"
