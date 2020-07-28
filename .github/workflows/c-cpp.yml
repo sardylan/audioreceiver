@@ -58,7 +58,7 @@ jobs:
       - name: FFTW3 Install
         run: cd 3rdparty/fftw-3.3.8-build && msbuild INSTALL.vcxproj
       - name: Configure
-        run: mkdir build && cd build && Set-Item -Path Env:PKG_CONFIG_PATH -Value ("..\3rdparty\fftw-3.3.8-install\lib\pkgconfig;" + $Env:PKG_CONFIG_PATH) && cmake ..
+        run: mkdir build && cd build && cmake .. -DFFTW_ROOT="../fftw-3.3.8-install"
       - name: Make
         run: cd build && msbuild audioreceiver.sln
       - name: Make check
